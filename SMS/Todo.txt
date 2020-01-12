@@ -1,0 +1,18 @@
+"""
+this file tracks my pending incomplete functions that i have to add
+
+"""
+
+1. Add a method to automate the admission process [ ****done**** ]
+2. Ensure that the form validation process is complete
+3. Add method to assign the student randomly to a class( if it random or systematically type of admission )
+
+4. create a grading system and procedure follow:
+    (a). On the home menu bar click 'Registers' and on the drop-down click 'myRegisters'. Select the 'academic year' and the
+    'semester' then hit 'Generate Lists / Register' as illustrated below myregisters
+    (b). On the list generated find the unit you are about to upload marks in to and hit the 'Exam entry' hyperlink under
+    the exam entry column. This will open a list of all the student's who registered for the unit
+    (c). Enter marks for the course work (CW) and Examination in the slots provided for all the students who sat the
+     examination and save by clicking 'save selected marks entry' buttonsave selected marks
+    (d). Finally to print the mark-sheet you have just saved click on 'Print Saved marksheet in Pdf' button as illustrated
+     below Print saved marks

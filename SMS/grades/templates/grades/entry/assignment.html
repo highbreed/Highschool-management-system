@@ -1,0 +1,53 @@
+{% extends "base_bootstrap.html" %}
+
+{% block title %}Enter assignment scores{% endblock %}
+
+{% block content %}
+
+  <h1>Enter assignment scores for {{assignment.title}}</h1>
+
+ {% if roster %}
+
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>
+      <span data-tooltip class="has-tip" title="View record for student.">Student</span>
+    </th>
+    <th>
+      <span data-tooltip class="has-tip" title="Enter a score. Click the button beside the score to save. When the button is green the score is saved.">Score</span>
+    </th>
+  </tr>
+  {% for roster_entry in roster %}
+  <tr>
+
+    <td><a href="{% url 'grades:roster_student' section.id roster_entry.student.id %}">{{ roster_entry.student }}</a></td>
+    <td><input type="text" width="4" class="score" data-student="{{roster_entry.student.id}}"/></td>
+
+  </tr>
+  
+  {% endfor %}
+    </table>
+{% else %}
+    <p>No students currently found in this section. Go to the <a href="{% url 'admin:index' %}grades/roster/add/?section={{section.id}}">admin page</a> to add students.</p>
+{% endif %}
+{% endblock %}
+
+{% block local_sidebar %}
+<li>
+  <a href="{% url 'grades:section' section.id %}">Section {{section.number}}</a>
+  <ul class="nav nav-pills nav-stacked well well-sm">
+    <li><a href="{% url 'grades:roster' section.id %}">View Section Roster</a></li>
+    <li><a href="{% url 'grades:assignments' section.id %}">View Section Assignments</a></li>
+    <li><a href="{% url 'grades:hw_entry' section.id %}">Enter Homework Assignments</a></li>
+    <li><a href="{% url 'grades:view_scores' section.id %}">View All Scores</a></li>
+  </ul>
+</li>
+{% endblock %}
+
+{% block body_js %}
+<script type="text/javascript" />
+function getScores(){
+  $.get('{% url rest-api:assignment_scores %}')
+}
+</script>
+{% endblock %}

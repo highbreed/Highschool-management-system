@@ -1,0 +1,30 @@
+{% extends "base_bootstrap.html" %}
+
+{% block title %}Section {{ section.number }}{% endblock %}
+
+{% block content %}
+
+<h1>Section {{ section.number }}</h1>
+
+{% if section %}
+<dl>
+  <dt>Title:</dt><dd>{{section.course}}</dd>
+  <dt>Semester:</dt><dd>{{section.semester}}</dd>
+</dl>
+{% else %}
+    <p>Section not available.</p>
+{% endif %}
+
+{% endblock %}
+
+{% block local_sidebar %}
+<li class="active">
+  <a href="#">Section {{section.number}}</a>
+  <ul class="nav nav-pills nav-stacked well well-sm">
+    <li><a href="{% url 'grades:roster' section.id %}">View Section Roster</a></li>
+    <li><a href="{% url 'grades:assignments' section.id %}">View Section Assignments</a></li>
+    <li><a href="{% url 'grades:hw_entry' section.id %}">Enter Homework Assignments</a></li>
+    <li><a href="{% url 'grades:view_scores' section.id %}">View All Scores</a></li>
+  </ul>
+</li>
+{% endblock %}

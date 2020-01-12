@@ -1,0 +1,17 @@
+<html>
+<head>
+<title>Section List</title>
+</head>
+<body>
+  <h1>Section List</h1>
+ {% if section_list %}
+    <ul>
+    {% for section in section_list %}
+        <li><a href="{% url 'grades:section' section.id %}">{{ section }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No sections are available.</p>
+{% endif %}
+</body>
+</html>

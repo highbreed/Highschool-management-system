@@ -1,0 +1,4 @@
+pillow
+django-crispy-forms
+foundation
+six

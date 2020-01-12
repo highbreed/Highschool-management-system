@@ -1,0 +1,73 @@
+{% extends "base_generic.html" %}
+
+{% block title %}View Scores{% endblock %}
+
+{% block content %}
+{% if assignments and roster %}
+View scores for Section <a href="{% url 'grades:section' section.id %}">{{section.number}}</a>:<br/>
+<br/>
+<table class="grade-table table table-hover table-condensed">
+  <tr>
+    <th style="text-align:left;">Last</th>
+    <th style="text-align:left;">First</th>
+    {% for assignment in assignments %}
+    <th>{{assignment.name}}</th>
+    {% endfor %}
+    <th style="text-align:left;">Last</th>
+    <th style="text-align:left;">First</th>
+  </tr>
+  {% for r in roster %}
+  <tr id="{{r.student.id}}">
+    <td style="white-space: nowrap; text-align:left;"><a href="{% url 'grades:roster_student' section.id r.student.id%}">{{r.student.last_name}}</a></td>
+    <td style="white-space: nowrap;padding-left:2px;padding-right:2px; text-align:left;"><a href="{% url 'grades:roster_student' section.id r.student.id%}">{{r.student.first_name}}</a></td>
+    {% for assignment in assignments %}
+    <td id="{{r.student.id}}-{{assignment.id}}" data-student="{{r.student.id}}" data-assignment="{{assignment.id}}" data-score="0" data-url="{% url 'grades:hw_entry_add_remove' section_id=section.id student_id=r.student.id assignment_id=assignment.id %}" title="{{assignment.name}} - {{r.student.last_name}}, {{r.student.first_name}}">
+      &ndash;
+    </td>
+    {% endfor %}
+    <td style="white-space: nowrap; text-align:left;"><a href="{% url 'grades:roster_student' section.id r.student.id%}">{{r.student.last_name}}</a></td>
+    <td style="white-space: nowrap;padding-left:2px;padding-right:2px; text-align:left;"><a href="{% url 'grades:roster_student' section.id r.student.id%}">{{r.student.first_name}}</a></td>
+  </tr>
+  {% endfor %}
+  <tr>
+    <th style="text-align:left;">Last</th>
+    <th style="text-align:left;">First</th>
+    {% for assignment in assignments %}
+    <th>{{assignment.name}}</th>
+    {% endfor %}
+    <th style="text-align:left;">Last</th>
+    <th style="text-align:left;">First</th>
+  </tr>
+</table>
+{% else %}
+<br/>No data.
+{% endif %}
+
+{% endblock %}
+
+{% block body_js %}
+<script>
+
+{% for s in scores %}
+var currentItem=$('#{{s.student.id}}-{{s.assignment.id}}');
+currentItem.html(' <a href="{% url 'admin:index' %}grades/assignmentscore/{{s.id}}/">{{s.score}}</a> ');
+currentItem.data('score',{{s.score}});
+{% endfor %}
+
+var students=[{% for r in roster %}{{r.student.id}},{% endfor %}];
+var assignments=[{% for assignment in assignments %}{{assignment.id}},{% endfor %}];
+
+</script>
+{% endblock %}
+
+{% block local_sidebar %}
+<li>
+  <a href="{% url 'grades:section' section.id %}">Section {{section.number}}</a>
+  <ul class="nav">
+    <li><a href="{% url 'grades:roster' section.id %}">View Section Roster</a></li>
+    <li><a href="{% url 'grades:assignments' section.id %}">View Section Assignments</a></li>
+    <li><a href="{% url 'grades:hw_entry' section.id %}">Enter Homework Assignments</a></li>
+    <li>View All Scores</li>
+  </ul>
+</li>
+{% endblock %}

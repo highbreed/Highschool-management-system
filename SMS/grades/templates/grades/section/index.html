@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Section List{% endblock %}
+
+{% block content %}
+
+  <h1>Section List</h1>
+ {% if section_list %}
+    <ul>
+    {% for section in section_list %}
+        <li><a id="section-{{section.id}}-link" href="{% url 'grades:section' section.id %}">{{ section }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No sections are available.</p>
+{% endif %}
+    <p><a href="grades/section/add/">Add a section.</a></p>
+
+{% endblock %}
+
+{% block local_sidebar %}
+{% endblock %}

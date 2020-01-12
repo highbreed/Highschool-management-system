@@ -1,0 +1,190 @@
+{% extends "base_bootstrap.html" %}
+
+{% block title %}Assignment{% endblock %}
+
+{% block content %}
+  <h1>Assignment</h1>
+<table>
+  <tr><th>Section:</th> <td>
+      <span data-tooltip class="has-tip" title="Return to the section summary.">
+	<a href="{% url 'grades:section' section.id %}">{{section.number}}</a>
+      </span>
+  </td></tr>
+  <tr><th>Class:  </th> <td>{{section.course}}</td></tr>
+  <tr><th>Semester:</th> <td>{{section.semester}}</td></tr>
+</table>
+{% if assignment %}
+<table class="table table-striped table-condensed">
+  <tr>
+    <th><span data-tooltip class="has-tip" title="Click the assignment name to edit the assignment in the admin panel.">Name</span></th>
+    <th>Type</th>
+    <th>Max Possible Score</th>
+    <th>Date assigned</th>
+    <th>Date due</th>
+    <th>A Cutoff</th>
+    <th>B Cutoff</th>
+    <th>C Cutoff</th>
+    <th>D Cutoff</th>
+  </tr>
+  <br/>
+
+  <tr>
+    <td><a href="{% url 'admin:index' %}grades/assignment/{{assignment.id}}/">{{assignment.name}}</a></td>
+    <td>{{assignment.assignment_type}}</td>
+    <td>{{assignment.max_value}}</td>
+    <td>{{assignment.assign_date}}</td>
+    <td>{{assignment.due_date}}</td>
+    <td>{{assignment.a_cutoff}}</td>
+    <td>{{assignment.b_cutoff}}</td>
+    <td>{{assignment.c_cutoff}}</td>
+    <td>{{assignment.d_cutoff}}</td>
+  </tr>
+
+</table>
+{% else %}
+    <p>Assignment not available.</p>
+{% endif %}
+
+<h2>Current Scores</h2>
+    
+{% if scores %}
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>Student</th>
+    <th>Score</th>
+    <th></th><th></th>
+  </tr>
+  <br/>
+{% for score in scores %}
+  <tr>
+    <td>{{score.student}}</td>
+    <td><a href="{% url 'api-root' %}assignment_score/{{score.id}}">{{score.score}}</a></td>
+    <td>
+      <div class="btn-group" role="group">
+	<button type="button" class="btn btn-default btn-sm score-edit">Edit</button>
+	<button type="button" class="btn btn-default btn-sm score-delete" data-assignment-score-id="{{score.id}}">Delete</button>
+      </div>
+    </td>
+  </tr>
+{% endfor %}
+</table>
+{% else %}
+    <p>No scores are available.</p>
+{% endif %}
+
+
+    
+{% if students %}
+<h2>Add Scores</h2>
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>Student</th>
+    <th>Score</th>
+  </tr>
+  <br/>
+{% for enrolled_student in students %}
+  <tr>
+    <td>{{enrolled_student.student}}</td>
+    <td><input type="text" data-student-id="{{enrolled_student.student.id}}" class="score-input" /></td>
+  </tr>
+{% endfor %}
+</table>
+{% endif %}
+
+
+<div id="confirm" class="modal hide fade">
+  <div class="modal-body">
+    Are you sure?
+  </div>
+  <div class="modal-footer">
+    <button type="button" data-dismiss="modal" class="btn btn-primary" id="delete">Delete</button>
+    <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block local_sidebar %}
+<li>
+  <a href="{% url 'grades:section' section.id %}">Section {{section.number}}</a>
+  <ul class="nav nav-pills nav-stacked well well-sm">
+    <li><a href="{% url 'grades:roster' section.id %}">View Section Roster</a></li>
+    <li><a href="{% url 'grades:assignments' section.id %}">View Section Assignments</a></li>
+    <li><a href="{% url 'grades:hw_entry' section.id %}">Enter Homework Assignments</a></li>
+    <li><a href="{% url 'grades:view_scores' section.id %}">View All Scores</a></li>
+  </ul>
+</li>
+{% endblock %}
+
+
+{% block body_js %}
+{% csrf_token %}
+
+<script type="text/javascript">
+  var csrf=$("input[name='csrfmiddlewaretoken']").val();
+  var change_val=function()
+  {
+    alert('Not yet implemented');return;
+    if(!confirm("Are you sure you wish to delete this entry?")){return;}    
+    var elem=$(this)
+    var scoreId=elem.data('assignmentScoreId');
+    var url='{% url 'api-root' %}assignment_score/'+scoreId;
+    $.ajax({
+      type: "PUT",
+      url: url,
+      data: '',
+      contentType: 'application/json',
+      success: function(){console.log('deleting row');elem.closest('tr').remove();},
+      headers: {
+          'X-CSRFToken': csrf,
+      }
+    });
+  }
+
+  var delete_val=function()
+  {
+    if(!confirm("Are you sure you wish to delete this entry?")){return;}    
+    var elem=$(this)
+    var scoreId=elem.data('assignmentScoreId');
+    var url='{% url 'api-root' %}assignment_score/'+scoreId;
+    $.ajax({
+      type: "DELETE",
+      url: url,
+      data: '',
+      contentType: 'application/json',
+      success: function(){console.log('deleting row');elem.closest('tr').remove();},
+      headers: {
+          'X-CSRFToken': csrf,
+      }
+    });
+  }
+
+  var add_val=function(){
+    var elem=$(this)
+    var url='{% url 'api-root' %}assignment_score/';
+    var student_id=elem.data('studentId');
+    var student='{% url 'api-root' %}student/'+student_id+'/';
+    var assignment='{% url 'api-root' %}assignment/{{assignment.id}}/';
+    var score=elem.val();
+    if(score.length < 1){return;}
+    if(Number(score)>=0 && Number(score)<={{assignment.max_value}}){
+      $.ajax({
+        type: "POST",
+        url: url,
+        data: '{"student": "'+student+'","assignment":"'+assignment+'","score":"'+score+'"}',
+        contentType: 'application/json',
+        success: function(){elem.prop('disabled', true);},
+        headers: {
+            'X-CSRFToken': csrf,
+        }
+      });
+    }else{
+      alert('Score not a number or outside of valid range. Not submitted.')				   
+    }
+  }
+
+  $('.score-edit').click(change_val);
+  $('.score-delete').click(delete_val);
+  $('.score-input').blur(add_val);
+</script>
+
+{% endblock %}

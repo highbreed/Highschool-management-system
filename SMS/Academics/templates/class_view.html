@@ -1,0 +1,46 @@
+<div class="card">
+    <div class="header">
+        <h4 class="title text-center">Available classes</h4>
+    </div>
+    <div class="content">
+        <div class="panel-group" id="class_view_accordian">
+            {% for data in class_rooms %}
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title" data-target="#{{ data }}" data-toggle="collapse" data-parent="#class_view_accordian" style="align:center;">
+                        {{ data }}
+                        <i class="float-right pe-7s-angle-up-circle align pe-fw pe-va" id="#panel-icon"></i>
+                    </h3>
+
+                </div>
+                <div class="panel-collapse collapse" id="{{ data }}">
+                    <div class="panel-body">
+                        <table class="table table-inverse">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Streams</th>
+                                    <th scope="col">Capacity</th>
+                                    <th scope="col">Edit</th>
+                                    <th scope="col">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for class_stream in stream_view %}
+                            <tr>
+                                {% if class_stream.class_id == data %}
+                                <td>{{ class_stream }} </td>
+                                <td>{{ class_stream.class_id.capacity }} sits</td>
+                                <td><a href="#"><i class="fa fa-edit" aria-hidden="true"></i></a></td>
+                                <td><a href="#"><i class="fa fa-trash"></i></a></td>
+                                {% endif %}
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>

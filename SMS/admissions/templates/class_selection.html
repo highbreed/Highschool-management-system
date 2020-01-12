@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col">
+        <div class="card">
+            <div class="heading">
+                <h4 class="title text-center">Classes in Form {{ parent_class }}</h4>
+            </div>
+            <div class="content">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Class</th>
+                            <th scope="col">Available sits</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for class_stream in available_classes %}
+                    <tr>
+                        <td><a class="btn btn-primary" href="#">{{ class_stream }}</a></td>
+                        <td>{{ class_stream.capacity }} </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

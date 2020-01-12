@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="header">
+                <h4 class="title text-center">Teachers Admission</h4>
+            </div>
+            <div class="content">
+                <form  method="post">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            <div class="form-row">
+                                <div class="form-group col-md-12 mb-0">
+                                    <h4 class="title text-center">Teachers Details</h4>
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.first_name|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.middle_name|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.last_name|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-12 mb-0">
+                                    {{ teacher_form.gender|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12 mb-0">
+                                    <h4 class="title text-center">Address</h4>
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ address_form.address|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ address_form.email|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ address_form.phone_number|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12 mb-0">
+                                    <h4 class="title text-center">Specialization</h4>
+                                </div>
+                                <div class="form-group col-md-12 mb-0">
+                                    {{ teacher_subject.subjects|as_crispy_field }}
+                                </div>
+                            </div>
+                        </div>
+                        <input type="submit" value="SUBMIT" class="btn btn-primary">
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

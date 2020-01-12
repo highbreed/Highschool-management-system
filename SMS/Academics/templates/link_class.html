@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="card">
+    <div class="header">
+        <h4 class="title text-center">Add ClassStream</h4>
+    </div>
+    <div class="content">
+      <form action="{% url 'academic:class_stream' %}" method="post">
+            {% crispy link_form %}
+        </form>
+    </div>
+</div>
+{% endblock %}

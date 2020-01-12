@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card">
+            Statistical view to be implemented
+        </div>
+    </div>
+    <div class="col-md-6">
+        {% include 'class_view.html' %}
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <h4 class="header text-center">Class Management</h4>
+            <div class="content">
+                 <a class="btn btn-primary" href="{% url 'academic:add_class' %}" >Add New Class</a>
+                 <a class="btn btn-primary " href="{% url 'academic:add_stream' %}">Add New stream</a>
+                 <a class="btn btn-primary" href="{% url 'academic:class_stream' %}">Add Class Stream</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,69 @@
+{% extends "base_bootstrap.html" %}
+
+{% block title %}Roster{% endblock %}
+
+{% block content %}
+
+  <h1>Roster</h1>
+
+<table>
+  <tr><th>Section:</th>  <td><a href="{% url 'grades:section' section.id %}">{{section.number}}</a></td></tr>
+  <tr><th>Class:  </th>  <td>{{section.course}}</td></tr>
+  <tr><th>Semester:</th> <td>{{section.semester}}</td></tr>
+  <tr><th>Records:</th>  <td>{{roster|length}}</td></tr>
+</table>
+<br/>
+ {% if roster %}
+
+<table class="table table-striped table-condensed">
+  <tr>
+    <th>
+      <span data-tooltip class="has-tip" title="View record for student.">Student</span>
+    </th>
+    {% if not privacy %}
+    <th>
+      <span data-tooltip class="has-tip" title="Edit enrollment status in the admin panel">Enrollment Status</span>
+    </th>
+    {% endif %}
+  </tr>
+  {% for roster_entry in roster %}
+  <tr>
+    {% if privacy %}
+      <td><a href="{% url 'grades:roster_student' section.id roster_entry.student.id %}?p=true">{{ roster_entry.student.last_name }}, {{roster_entry.student.first_name}}</a></td>
+    {% else %}
+    <td><a href="{% url 'grades:roster_student' section.id roster_entry.student.id %}">{{ roster_entry.student }}</a></td>
+    <td><a href="{% url 'admin:index' %}grades/roster/{{roster_entry.id}}/">{{roster_entry.enrollment_status}}</a></td>
+    {% endif %}
+  </tr>
+  
+  {% endfor %}
+    </table>
+{% else %}
+    <p>Roster is not available.</p>
+{% endif %}
+
+{% if not privacy %}
+    <a href="{% url 'admin:index' %}grades/roster/add/?section={{section.id}}">Add a student to the roster.</a>
+{% endif %}
+
+{% endblock %}
+
+{% block local_sidebar %}
+<li>
+  <a href="{% url 'grades:section' section.id %}">Section {{section.number}}</a>
+  <ul class="nav nav-pills nav-stacked well well-sm">
+    <li class="active"><a href="#">View Section Roster</a></li>
+    <li><a href="{% url 'grades:assignments' section.id %}">View Section Assignments</a></li>
+    <li><a href="{% url 'grades:hw_entry' section.id %}">Enter Homework Assignments</a></li>
+    <li><a href="{% url 'grades:view_scores' section.id %}">View All Scores</a></li>
+  </ul>
+</li>
+<li>
+{% if not privacy %}
+  <a href="?p=true">Enable privacy mode</a>
+{% else %}
+  <a href="./">Leave privacy mode</a>
+{% endif %}
+</li>
+{% endblock %}
+

@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
-from .forms import ClassRoomRegForm, StreamRegForm, ClassStreamForm, SchoolRegForm, SubjectRegForm
-from DB.models import ClassRoom, Stream, ClassStream
+from .forms import ClassRoomRegForm, StreamRegForm, SchoolRegForm, SubjectRegForm
+from DB.models import ClassRoom, Stream
 
 
 # Create your views here.
@@ -26,14 +26,10 @@ def class_management(request):
 	else:
 		class_form = ClassRoomRegForm()
 		stream_form = StreamRegForm()
-		class_link = ClassStreamForm()
-		class_stream = ClassStream.objects.all()
 		class_room = ClassRoom.objects.all()
 		context = {
 			'class_form': class_form,
 			'stream_form': stream_form,
-			'link_form': class_link,
-			'stream_view': class_stream,
 			'class_rooms': class_room,
 		}
 
@@ -43,6 +39,11 @@ def class_management(request):
 
 
 def add_stream(request):
+	"""
+	function for adding stream
+	:param request:
+	:return:
+	"""
 	if request.method == 'POST':
 		stream_form = StreamRegForm(request.POST)
 		if stream_form.is_valid():
@@ -64,8 +65,14 @@ def add_stream(request):
 
 
 def link_class_stream(request):
+	"""
+	this function is responsible for linking a classroom to a stream
+	:param request:
+	:return:
+	"""
+
 	if request.method == 'POST':
-		link_form = ClassStreamForm(request.POST)
+		link_form = ClassRoomRegForm(request.POST)
 		if link_form.is_valid():
 			link_form.save()
 			messages.info(request, 'New classroom added')
@@ -74,7 +81,7 @@ def link_class_stream(request):
 			messages.info(request, link_form.errors)
 			return redirect('/academic/link_class_stream/')
 	else:
-		link_form = ClassStreamForm()
+		link_form = ClassRoomRegForm()
 		template = 'link_class.html'
 		context = {
 			'link_form': link_form,
@@ -83,7 +90,7 @@ def link_class_stream(request):
 
 
 def class_view(request):
-	class_stream = ClassStream.objects.all()
+	class_stream = ClassRoom.objects.all()
 	template = 'class_view.html'
 	context = {
 		'stream_view': class_stream,

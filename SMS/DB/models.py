@@ -150,14 +150,47 @@ class Term(models.Model):
 		return self.term
 
 
+
+class Stream(models.Model):
+	name = models.CharField(max_length=50, validators=[stream_validator])
+
+	def __str__(self):
+		return self.name
+
+
+class Teacher(models.Model):
+	teacher_id = models.AutoField(primary_key=True)
+	first_name = models.CharField(max_length=100)
+	middle_name = models.CharField(max_length=100, blank=True)
+	last_name = models.CharField(max_length=100)
+	subject_teaching = models.ManyToManyField(Subject, blank=True)
+	nationality = models.CharField(max_length=100 ,blank=True, null=True)
+	national_id = models.CharField(max_length=100, blank=True, null=True)
+	address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True)
+	slug = models.SlugField(blank=True)
+	gender = models.CharField(max_length=1, choices=GENDER_CHOICE)
+
+	def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+		self.slug = slugify(self.first_name + self.last_name)
+		super(Teacher, self).save()
+
+	def __str__(self):
+		return "{} {}".format(self.first_name[0], self.last_name)
+
+
 class ClassRoom(models.Model):
-	name = models.CharField(max_length=50, validators=[class_room_validator])
+	name = models.CharField(max_length=50)
+	stream_id = models.ForeignKey(Stream, on_delete=models.CASCADE, blank=True, related_name='class_stream')
 	subjects = models.ManyToManyField(Subject, blank=True)
+	class_teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=True)
 	capacity = models.IntegerField(help_text='Enter total number of sits defaults is set to 25', default=25, blank=True)
 	occupied_sits = models.IntegerField(blank=True, null=True, default=0)
 
 	def __str__(self):
-		return self.name
+		if self.stream_id:
+			return "{} {}".format(self.name, str(self.stream_id))
+		else:
+			return self.name
 
 	def available_sits(self):
 		open_sits = self.capacity - self.occupied_sits
@@ -185,46 +218,15 @@ class ClassRoom(models.Model):
 			super(ClassRoom, self).save()
 
 
-class Stream(models.Model):
-	name = models.CharField(max_length=50, validators=[stream_validator])
-
-	def __str__(self):
-		return self.name
-
-
-class ClassStream(models.Model):
-	class_id = models.ForeignKey(ClassRoom, on_delete=models.CASCADE, related_name='class_stream')
-	stream_id = models.ForeignKey(Stream, on_delete=models.CASCADE, blank=True, related_name='class_stream')
-
-	def __str__(self):
-		return "{}{}".format(str(self.class_id), str(self.stream_id))
-
-
-class Teacher(models.Model):
-	teacher_id = models.AutoField(primary_key=True)
-	first_name = models.CharField(max_length=100)
-	middle_name = models.CharField(max_length=100, blank=True)
-	last_name = models.CharField(max_length=100)
-	subject_teaching = models.ManyToManyField(Subject, blank=True)
-	address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True)
-	slug = models.SlugField(blank=True)
-	gender = models.CharField(max_length=1, choices=GENDER_CHOICE)
-
-	def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
-		self.slug = slugify(self.first_name + self.last_name)
-		super(Teacher, self).save()
-
-	def __str__(self):
-		return "{} {}".format(self.first_name[0], self.last_name)
-
-
 class SubjectAllocation(models.Model):
+	"""
+	A model to allocate subjects to respective teacher t the school
+	"""
 	teacher_name = models.ForeignKey(Teacher, on_delete=models.CASCADE)
 	subjects = models.ManyToManyField(Subject, related_name='allocated_subjects')
 	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
 	term = models.CharField(max_length=10, choices=ACADEMIC_TERM, blank=True, null=True)
 	class_room = models.ForeignKey(ClassRoom, on_delete=models.CASCADE)
-	stream = models.ForeignKey(Stream, on_delete=models.CASCADE, blank=True, null=True)
 
 	def __str__(self):
 		return str(self.teacher_name)
@@ -232,14 +234,6 @@ class SubjectAllocation(models.Model):
 	def subjects_data(self):
 		for data in self.subjects.all():
 			return data
-
-
-class ClassTeachers(models.Model):
-	teacher_name = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='class_teacher')
-	stream_id = models.ForeignKey(ClassStream, on_delete=models.CASCADE, related_name='class_teacher')
-
-	def __str__(self):
-		return str(self.teacher_name)
 
 
 class Parent(models.Model):
@@ -296,7 +290,6 @@ class StudentClass(models.Model):
 
 	student_id = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_class')
 	main_class = models.ForeignKey(ClassRoom, on_delete=models.CASCADE)
-	class_stream = models.ForeignKey(Stream, on_delete=models.CASCADE, related_name='student_class', blank=True)
 	date_from = models.DateField(auto_now_add=True)
 	date_to = models.DateField(blank=True, null=True)
 
@@ -305,10 +298,7 @@ class StudentClass(models.Model):
 
 	def student_class(self):
 		# this method returns the class a student is in
-		if self.class_stream:
-			return "{} {}".format(str(self.main_class), str(self.class_stream))
-		else:
-			return str(self.main_class)
+		return str(self.main_class)
 
 	def update_class_table(self):
 		selected_class = ClassRoom.objects.get(pk=self.main_class.pk)
@@ -378,6 +368,7 @@ class Dormitory(models.Model):
 		total = self.capacity - self.occupied_beds
 		if total <= 0:
 			return "all beds in {} are occupied".format(self.name)
+
 		else:
 			return total
 

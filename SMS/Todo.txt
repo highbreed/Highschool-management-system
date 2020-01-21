@@ -16,3 +16,5 @@ this file tracks my pending incomplete functions that i have to add
      examination and save by clicking 'save selected marks entry' buttonsave selected marks
     (d). Finally to print the mark-sheet you have just saved click on 'Print Saved marksheet in Pdf' button as illustrated
      below Print saved marks
+
+5; carts in student admission dashboard

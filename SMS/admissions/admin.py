@@ -6,7 +6,6 @@ from DB.models import *
 admin.site.register(Address)
 admin.site.register(Teacher)
 admin.site.register(SubjectAllocation)
-admin.site.register(ClassTeachers)
 admin.site.register(Student)
 admin.site.register(Parent)
 admin.site.register(StudentClass)

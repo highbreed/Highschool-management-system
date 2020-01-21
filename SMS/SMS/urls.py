@@ -16,11 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import url, include
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url(r'^', include('core.urls')),
     url(r'^academic/', include('Academics.urls')),
     url(r'^admissions/', include('admissions.urls')),
-    #url(r'^grades/', include('grades.urls')),
-]
+    url(r'^student/', include('student.urls')),
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

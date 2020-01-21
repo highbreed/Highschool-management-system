@@ -3,13 +3,21 @@
 {% block header %}
 
 {% endblock %}
+{% block page_header %}
+<div class="col-sm-6">
+    <ol class="breadcrumb float-sm-left">
+        <li class="breadcrumb-item"><a href="{% url 'admissions:dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item active"><a href="#">Dashboard v1</a></li>
+    </ol>
+</div>
+{% endblock %}
 {% block content %}
 <div class="row">
     <div class="col-md-12">
         <div class="card">
             <div class="card-content">
                 <div class="card-body">
-                    <form  method="post" action="{% url 'admissions:student_admission' %}">
+                    <form  method="post" action="{% url 'admissions:student_admission' %}" enctype='multipart/form-data'>
                         {% csrf_token %}
                         <div class="form-group col-12 mb-0">
                             <ul class="stepper">

@@ -3,15 +3,19 @@ from django.http import HttpResponse
 from django.contrib import messages
 import datetime
 from .forms import ParentForm, StudentForm, \
-	AddressForm, TeacherForm, StudentClassSelectorForm, TeacherSubjectForm, ClassTeacherForm
-from DB.models import ClassStream, ClassRoom, Student, SubjectAllocation
-
+	AddressForm, TeacherForm, StudentClassSelectorForm, TeacherSubjectForm
+from DB.models import  ClassRoom, Student, SubjectAllocation, StudentClass, Stream
 
 
 def dashboard(request):
+	"""
+	this is the index of admission app...
+	shows school admissions info
+	:param request:
+	:return:
+	"""
 	total_school_capacity = []
 	class_rooms = ClassRoom.objects.all()
-	class_stream = ClassStream.objects.all()
 
 	# lets get the school_capacity and all available vacancies
 	for data in class_rooms:
@@ -23,7 +27,6 @@ def dashboard(request):
 	template = 'admission_dashboard.html'
 	context = {
 		'class_rooms': class_rooms,
-		'class_streams': class_stream,
 		'school_capacity': sum(total_school_capacity),
 		'students_total': students_total,
 		'vacancies': sum(total_school_capacity) - students_total,
@@ -31,25 +34,24 @@ def dashboard(request):
 	return render(request, template, context)
 
 
-def class_stream_view(request, slug):
-	stream = get_object_or_404(ClassStream, pk=slug)
+def class_room_view(request, slug):
+	"""
+	this function takes in the pk of classroom as an argument and
+	returns all data associated with the classroom
+	:param request:
+	:param slug:
+	:return:
+	"""
+	class_room = get_object_or_404(ClassRoom, pk=slug)
 
 	# get class statistics
-	class_subjects = []
-	class_data_sets = [['Empty Sits', stream.available_sits], ['Occupied Sits', stream.occupied_sits]]
-	student_class = SubjectAllocation.objects.filter(class_stream=stream)
-	class_subjects_qs = SubjectAllocation.objects.filter(class_id=stream)
-	for data in class_subjects_qs:
-		for subject in data.subject_id.all():
-			class_subjects.append(subject)
+	student_class = StudentClass.objects.filter(main_class=class_room)
 
 	context = {
-		'class_sits': class_data_sets,
-		'class_name': stream,
+		'class_name': class_room,
 		'students': (data.student_id for data in student_class),
-		'subject_dataset': class_subjects,
 	}
-	template = 'class_stream_details.html'
+	template = 'class_room_details.html'
 	return render(request, template, context)
 
 
@@ -61,8 +63,8 @@ def student_admission(request):
 	:return:
 	"""
 	if request.method == 'POST':
-		student_form = StudentForm(request.POST, prefix='student_form')
-		parent_form = ParentForm(request.POST, prefix='parent_form')
+		student_form = StudentForm(request.POST, request.FILES,prefix='student_form')
+		parent_form = ParentForm(request.POST,  prefix='parent_form')
 		address_form = AddressForm(request.POST, prefix='address_form')
 		class_selector_form = StudentClassSelectorForm(request.POST, prefix='class_selector_form')
 		# lets check to see if all forms are valid
@@ -123,7 +125,7 @@ def teacher_admission(request):
 	"""
 
 	if request.method == 'POST':
-		teacher_form = TeacherForm(request.POST, prefix='teacher_form')
+		teacher_form = TeacherForm(request.POST,request.FILES, prefix='teacher_form')
 		address_form = AddressForm(request.POST, prefix='address_form')
 		teacher_subject_form = TeacherSubjectForm(request.POST, prefix='teacher_subject')
 		if all([teacher_form.is_valid(), address_form.is_valid(), teacher_subject_form.is_valid()]):
@@ -159,23 +161,15 @@ def teacher_admission(request):
 		return render(request, template, context)
 
 
-def class_teacher(request):
+def student_details(request):
 	"""
-	a function that assigns each stream with a class teacher
+	function to show the students details
 	:param request:
 	:return:
 	"""
-	if request.method == 'POST':
-		class_teacher_form = ClassTeacherForm(request.POST, prefix='class_teacher_form')
-		if class_teacher_form.is_valid():
-			class_teacher_form.save()
-			return HttpResponse('Thank You')
-		else:
-			return HttpResponse('form not valid')
+	if request.method == "GET":
+		student_id = request.GET['student_pk']
+		print('requested')
+		return HttpResponse('sucess')
 	else:
-		class_teacher_form = ClassTeacherForm(prefix='class_teacher_form')
-		template = 'teachers_admissions/class_teacher.html'
-		context = {
-			'class_form': class_teacher_form,
-		}
-		return render(request, template, context)
+		return HttpResponse('fuck you')

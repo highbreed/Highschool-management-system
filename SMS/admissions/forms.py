@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.widgets import CheckboxSelectMultiple, Select
 from DB.models import Student, Parent, Address, Teacher, \
-	StudentClass, SubjectAllocation, ClassTeachers
+	StudentClass, SubjectAllocation
 
 
 GENDER_CHOICE = (
@@ -63,11 +63,3 @@ class TeacherSubjectForm(forms.ModelForm):
 			'subjects': CheckboxSelectMultiple(),
 		}
 
-
-class ClassTeacherForm(forms.ModelForm):
-	class Meta:
-		model = ClassTeachers
-		fields = '__all__'
-		widgets = {
-			'stream_id': Select()
-		}

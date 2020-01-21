@@ -41,8 +41,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'Academics',
     'admissions',
-    #'grades',
-    #'Gradebook',
+    'student',
     'DB',
 
 ]

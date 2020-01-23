@@ -2,6 +2,10 @@ from django.urls import path
 from django.conf.urls import url, include
 from . import views
 
+
+app_name = "core"
+
+
 urlpatterns = [
-    url(r'^$', views.index, name='dashboard_index'),
+    path('', views.dashboard, name='dashboard'),
 ]

@@ -1,0 +1,18 @@
+.img-hover img {
+    -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    -o-transition: all .3s ease; /* IE 9 */
+  	-ms-transition: all .3s ease; /* Opera */
+  	transition: all .3s ease;
+  	position:relative;
+}
+
+.img-hover img:hover {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform:translateZ(0) scale(2.20); /* Safari and Chrome */
+    -moz-transform:scale(2.20); /* Firefox */
+    -ms-transform:scale(2.20); /* IE 9 */
+    -o-transform:translatZ(0) scale(2.20); /* Opera */
+    transform:translatZ(0) scale(2.20);
+}

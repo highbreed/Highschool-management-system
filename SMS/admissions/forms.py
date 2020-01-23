@@ -53,6 +53,9 @@ class TeacherForm(forms.ModelForm):
 		exclude = [
 			'slug',
 		]
+		widgets = {
+			'subject_teaching': CheckboxSelectMultiple(),
+		}
 
 
 class TeacherSubjectForm(forms.ModelForm):

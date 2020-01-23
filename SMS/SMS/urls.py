@@ -24,5 +24,5 @@ urlpatterns = [
     url(r'^', include('core.urls')),
     url(r'^academic/', include('Academics.urls')),
     url(r'^admissions/', include('admissions.urls')),
-    url(r'^student/', include('student.urls')),
+    #url(r'^student/', include('student.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

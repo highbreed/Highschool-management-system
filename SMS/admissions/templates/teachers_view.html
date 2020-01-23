@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header" style="background-color:#007bff">
+            <h3 class="card-title" >
+                <font color="white">
+                    <i class="fas fa-question-circle"></i>
+                    Teachers Information
+                </font>
+            </h3>
+            <a class="btn btn-primary float-right js-add-teacher" href="#modal-teacher" data-toggle="modal">
+                <i class="fas fa-user-plus"></i>
+                Add Teacher
+            </a>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <table id="example" class="table table-bordered table-striped table-responsive col-md-12">
+                <thead>
+                <tr>
+                    <th>Reg No:</th>
+                    <th>Photo</th>
+                    <th>Name</th>
+
+                    <th>phone</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Available Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for teacher in teachers %}
+                    <tr>
+                        <td>{{ teacher.teacher_id }}</td>
+                        <td>
+                            <div class="img-hover">
+                                <img class="img-circle rounded-circle img-responsive"
+                                     src="/media/{{ teacher.image }}"
+                                     alt="User profile picture" style="height:50px; width:60px;">
+                            </div>
+                        </td>
+                        <td>{{ teacher }}</td>
+                        <td>{{ teacher.phone_number }}</td>
+                        <td>{{ teacher.email }}</td>
+                        <td>{{ teacher.address }}</td>
+                        <td>
+                            <a href="#modal-teacher" data-toggle="modal" data-link="{{ teacher.pk }}" class="btn btn-primary btn-sm js-view-teacher">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="#modal-teacher" data-toggle="modal" data-link="{{ teacher.pk }}" class="btn btn-warning btn-sm js-update-teacher">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="#modal-delete" data-toggle="modal" data-link="{{ teacher.pk }}" class="btn btn-danger btn-sm js-delete-teacher">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- modals -->
+<div class="modal fade" id="modal-teacher">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<div class="modal fade" id="modal-delete">
+    <div class="modal-dialog  modal-danger">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <p class="text-center">Are You Sure You Want To Delete The Teacher Record ?</p>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger float-right" href="#">Delete</a>
+                <a class="btn btn-primary close" >Cancel</a>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{% endblock content%}
+
+{% block extra_scripts %}
+<!-- DataTables -->
+<script src="{% static 'plugins/datatables/jquery.dataTables.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+        crossorigin="anonymous"></script>
+<script>
+    $('.js-add-teacher').click(function(){
+        $.ajax({
+            url: '{% url 'admissions:teacher_registration' %}',
+            dataType: 'json',
+            success: function(data){
+                 $("#modal-teacher .modal-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+<script>
+    $('.js-update-teacher').click(function(){
+        var user_id;
+        user_id = $(this).attr("data-link");
+        $.ajax({
+            url: '{% url 'admissions:teacher_update' slug=1 %}',
+            dataType: 'json',
+            data: {
+                 post_id: user_id
+            },
+            success: function(data){
+                 $("#modal-teacher .modal-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+<script>
+    $('.js-view-teacher').click(function(){
+        var user_id;
+        user_id = $(this).attr("data-link");
+        $.ajax({
+            url: '{% url 'admissions:teacher_details' %}',
+            dataType: 'json',
+            data: {
+                 post_id: user_id
+            },
+            success: function(data){
+                 $("#modal-teacher .modal-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+<script>
+    $("#modal-teacher").on("submit", 'js-teacher-registration', function(){
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            data: form.serialize(),
+            type: form.attr("method"),
+            dataType: 'json',
+            success: function(data){
+                 $("#modal-teacher .modal-content").html(data.html_form);
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock %}

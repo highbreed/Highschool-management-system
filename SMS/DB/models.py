@@ -166,16 +166,21 @@ class Teacher(models.Model):
 	subject_teaching = models.ManyToManyField(Subject, blank=True)
 	nationality = models.CharField(max_length=100 ,blank=True, null=True)
 	national_id = models.CharField(max_length=100, blank=True, null=True)
-	address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True)
+	address = models.CharField(max_length=100,)
+	phone_number = models.CharField(max_length=25, default="+254")
+	email = models.EmailField(blank=True, null=True)
+	date_of_birth = models.DateField(blank=True, null=True)
 	slug = models.SlugField(blank=True)
+	designation = models.CharField(max_length=100, blank=True, null=True)
 	gender = models.CharField(max_length=1, choices=GENDER_CHOICE)
+	image = models.ImageField(upload_to='TeachersImages', blank=True, null=True)
 
 	def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
 		self.slug = slugify(self.first_name + self.last_name)
 		super(Teacher, self).save()
 
 	def __str__(self):
-		return "{} {}".format(self.first_name[0], self.last_name)
+		return "{} {}".format(self.first_name, self.last_name)
 
 
 class ClassRoom(models.Model):

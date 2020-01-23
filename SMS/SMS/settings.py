@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'Academics',
     'admissions',
-    'student',
     'DB',
 
 ]

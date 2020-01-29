@@ -13,8 +13,10 @@ this file tracks my pending incomplete functions that i have to add
     (b). On the list generated find the unit you are about to upload marks in to and hit the 'Exam entry' hyperlink under
     the exam entry column. This will open a list of all the student's who registered for the unit
     (c). Enter marks for the course work (CW) and Examination in the slots provided for all the students who sat the
-     examination and save by clicking 'save selected marks entry' buttonsave selected marks
+     examination and save by clicking 'save selected marks entry' button save selected marks
     (d). Finally to print the mark-sheet you have just saved click on 'Print Saved marksheet in Pdf' button as illustrated
      below Print saved marks
 
 5; carts in student admission dashboard
+
+6. update the academic year and term when not active

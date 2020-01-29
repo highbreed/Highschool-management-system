@@ -1,0 +1,62 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+ </div>
+<div class="modal-body">
+        <div class="card">
+            <div class="card-header">
+                <div class="row no-gutters">
+                    <div class="col-md-6">
+                        <div class="img-hover">
+                            <img class="img-circle rounded-circle img-responsive img-thumbnail  "
+                                 src="/media/{{ parent.image }}"
+                                 alt="User profile picture">
+                        </div>
+                    </div>
+                    <div class="col-md-6 ">
+                        <div class="container">
+                            <p class="h1 text-center" style="padding-top:25%;">{{ parent | capfirst}}</p>
+                            <p class="h2 text-center" >Phone:{{ parent.phone_number }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <table  class="table table-bordered table-striped col-md-12">
+                    <tr>
+                        <th>Parent Id</th>
+                        <td>{{ parent.pk }}</td>
+                        <th>Email</th>
+                        <td>{{ parent.email }}</td>
+                    </tr>
+                    <tr>
+                        <th>Gender</th>
+                        <td>
+                            <font color="blue">
+                            {{ parent.gender }}
+                            </font>
+                        </td>
+                        <th>Nationality</th>
+                        <td>
+                            {{ parent.nationality| capfirst }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>National Id</th>
+                        <td>{{ parent.national_id }}</td>
+                        <th>Phone</th>
+                        <td>{{ parent.phone_number }}</td>
+                    </tr>
+                    <tr>
+                        <th>Address</th>
+                        <td>{{ parent.address }}</td>
+                        <th>Children</th>
+                        <td>{% for child in parent.child.all  %} {{ child| capfirst }}, {% endfor %}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    <div class="modal-footer">
+    </div>
+</div>

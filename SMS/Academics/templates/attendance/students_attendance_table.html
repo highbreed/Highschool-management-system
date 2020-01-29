@@ -1,0 +1,29 @@
+<table id="example" class="table table-striped ">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Admission Number</th>
+        <th>Students Name</th>
+        <th>status</th>
+        <th>Comment</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for data_obj in data %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ data_obj.class_room }}</td>
+            <td>{{ data_obj.subject }}</td>
+            <td>{{ data_obj.teacher_name }}</td>
+            <td>
+                <a href="#modal-add-subject" data-toggle="modal" data-link="{{ data_obj.pk }}" class="btn btn-warning btn-sm js-update-subject">
+                    <i class="fas fa-edit"></i>
+                </a>
+                <a href="#modal-add-subject" data-toggle="modal" data-link="{{ class_room.pk }}" class="btn btn-danger btn-sm js-delete-class">
+                    <i class="fas fa-trash"></i>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

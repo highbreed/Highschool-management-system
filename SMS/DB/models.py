@@ -1,11 +1,10 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-import datetime
 from django.utils.text import slugify
-from .validators import class_room_validator, subject_validator, stream_validator, students_date_of_birth_validator, \
+from .validators import subject_validator, stream_validator, students_date_of_birth_validator, \
 	ASCIIUsernameValidator
-from admissions.scripts import assign_admission_numbers
+from .scripts import assign_admission_numbers
 
 A = "A"
 B = "B"
@@ -35,10 +34,17 @@ ACADEMIC_TERM = (
 )
 
 GENDER_CHOICE = (
-	('M', 'Male'),
-	('F', 'Female'),
+	('Male', 'Male'),
+	('Female', 'Female'),
 	('Other', 'Other')
 )
+
+Parent_CHOICE = (
+		('Father', 'Father'),
+		('Mother', 'Mother'),
+		('Guardian', 'Guardian'),
+
+	)
 
 SCHOOL_TYPE_CHOICE = (
 	('boarding school', 'boarding school'),
@@ -65,6 +71,11 @@ SCHOOL_CATEGORY = (
 )
 
 
+ATTENDANCE_CHOICES = (
+	("Present", "Present"),
+	('Absent', 'Absent'),
+	('Holiday', 'Holiday'),
+)
 class Address(models.Model):
 	address = models.CharField(max_length=250)
 	email = models.EmailField(null=True, blank=True)
@@ -130,6 +141,7 @@ class AcademicYear(models.Model):
 	"""
 	session = models.CharField(max_length=200, unique=True)
 	is_current_session = models.BooleanField(default=False, blank=True, null=True)
+	session_starts_on = models.DateField(blank=True, null=True)
 	next_session_begins = models.DateField(blank=True, null=True)
 
 	def __str__(self):
@@ -142,7 +154,7 @@ class Term(models.Model):
 	"""
 	term = models.CharField(max_length=10, choices=ACADEMIC_TERM, blank=True)
 	is_current_term = models.BooleanField(default=False, blank=True, null=True)
-	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, blank=True, null=True)
+	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, blank=True, null=True, related_name='acasemic_tearm')
 	term_ends_on = models.DateField(blank=True, null=True)
 	next_term_begins = models.DateField(null=True, blank=True)
 
@@ -172,7 +184,7 @@ class Teacher(models.Model):
 	date_of_birth = models.DateField(blank=True, null=True)
 	slug = models.SlugField(blank=True)
 	designation = models.CharField(max_length=100, blank=True, null=True)
-	gender = models.CharField(max_length=1, choices=GENDER_CHOICE)
+	gender = models.CharField(max_length=10, choices=GENDER_CHOICE)
 	image = models.ImageField(upload_to='TeachersImages', blank=True, null=True)
 
 	def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
@@ -186,7 +198,6 @@ class Teacher(models.Model):
 class ClassRoom(models.Model):
 	name = models.CharField(max_length=50)
 	stream_id = models.ForeignKey(Stream, on_delete=models.CASCADE, blank=True, related_name='class_stream')
-	subjects = models.ManyToManyField(Subject, blank=True)
 	class_teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, blank=True)
 	capacity = models.IntegerField(help_text='Enter total number of sits defaults is set to 25', default=25, blank=True)
 	occupied_sits = models.IntegerField(blank=True, null=True, default=0)
@@ -228,10 +239,10 @@ class SubjectAllocation(models.Model):
 	A model to allocate subjects to respective teacher t the school
 	"""
 	teacher_name = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-	subjects = models.ManyToManyField(Subject, related_name='allocated_subjects')
+	subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='allocated_subjects')
 	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
 	term = models.CharField(max_length=10, choices=ACADEMIC_TERM, blank=True, null=True)
-	class_room = models.ForeignKey(ClassRoom, on_delete=models.CASCADE)
+	class_room = models.ForeignKey(ClassRoom, on_delete=models.CASCADE, related_name='subjects')
 
 	def __str__(self):
 		return str(self.teacher_name)
@@ -242,37 +253,35 @@ class SubjectAllocation(models.Model):
 
 
 class Parent(models.Model):
-	Parent_CHOICE = (
-		('F', 'Father'),
-		('M', 'Mother'),
-		('G', 'Guardian'),
+	"""
 
-	)
+	"""
 	first_name = models.CharField(max_length=50)
 	middle_name = models.CharField(max_length=50, null=True, blank=True)
 	last_name = models.CharField(max_length=50)
-	parent_type = models.CharField(choices=Parent_CHOICE, max_length=1)
-	address = models.ForeignKey(Address, on_delete=models.CASCADE, blank=True, null=True)
+	gender = models.CharField(max_length=10, choices=GENDER_CHOICE, blank=True, null=True)
+	parent_type = models.CharField(choices=Parent_CHOICE, max_length=10)
+	address = models.CharField(max_length=150)
+	email = models.EmailField(blank=True, null=True)
+	phone_number = models.CharField(max_length=20, default="+254")
 	nationality = models.CharField(max_length=100, blank=True, null=True)
 	national_id = models.CharField(max_length=100, blank=True, null=True)
 	date = models.DateTimeField(auto_now_add=True)
+	image = models.ImageField(upload_to='ParentsImages', blank=True)
 
 	def __str__(self):
 		return "{} {}".format(self.first_name, self.last_name)
 
 
 class Student(models.Model):
-	GENDER_CHOICE = (
-		('M', 'Male'),
-		('F', 'Female'),
-
-	)
 	unique_id = models.AutoField(primary_key=True)
 	first_name = models.CharField(max_length=50)
 	middle_name = models.CharField(max_length=50, blank=True)
 	last_name = models.CharField(max_length=50)
-	gender = models.CharField(choices=GENDER_CHOICE, max_length=1, null=False)
-	parent = models.ForeignKey(Parent, on_delete=models.CASCADE, blank=True)
+	gender = models.CharField(choices=GENDER_CHOICE, max_length=10,  blank=True)
+	religion = models.CharField(max_length=50, blank=True, null=True)
+	blood_group = models.CharField(max_length=10, blank=True, null=True)
+	parent = models.ForeignKey(Parent, on_delete=models.CASCADE, blank=True, related_name='child')
 	date_of_birth = models.DateField(validators=[students_date_of_birth_validator])
 	admission_date = models.DateTimeField(auto_now_add=True)
 	admission_number = models.CharField(max_length=50, blank=True)
@@ -295,8 +304,7 @@ class StudentClass(models.Model):
 
 	student_id = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_class')
 	main_class = models.ForeignKey(ClassRoom, on_delete=models.CASCADE)
-	date_from = models.DateField(auto_now_add=True)
-	date_to = models.DateField(blank=True, null=True)
+	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
 
 	def __str__(self):
 		return str(self.student_id)
@@ -411,3 +419,17 @@ class DormitoryAllocation(models.Model):
              update_fields=None):
 		self.update_dormitory()
 		super(DormitoryAllocation, self).save()
+
+
+class StudentAttendance(models.Model):
+	classroom_id = models.ForeignKey(ClassRoom, on_delete=models.CASCADE, related_name='student_attendance')
+	attendance_date = models.DateField()
+	student_id = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_attendance')
+	status = models.CharField(max_length=20, choices=ATTENDANCE_CHOICES)
+	comment = models.CharField(max_length=150, blank=True)
+	signed_by = models.ForeignKey(Teacher, on_delete=models.CASCADE)
+	date = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return str(self.student_id)
+

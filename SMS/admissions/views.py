@@ -3,10 +3,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.template.loader import render_to_string
-import datetime
 from .forms import ParentForm, StudentForm, \
-	AddressForm, TeacherForm, StudentClassSelectorForm, TeacherSubjectForm
-from DB.models import  ClassRoom, Student, SubjectAllocation, StudentClass, Stream, Teacher
+	AddressForm, TeacherForm, StudentClassSelectorForm
+# noinspection PyUnresolvedReferences
+from DB.models import  ClassRoom, Student, SubjectAllocation, StudentClass, Stream, Teacher, Parent
 
 
 def dashboard(request):
@@ -68,27 +68,20 @@ def student_admission(request):
 	if request.method == 'POST':
 		student_form = StudentForm(request.POST, request.FILES,prefix='student_form')
 		parent_form = ParentForm(request.POST,  prefix='parent_form')
-		address_form = AddressForm(request.POST, prefix='address_form')
 		class_selector_form = StudentClassSelectorForm(request.POST, prefix='class_selector_form')
 		# lets check to see if all forms are valid
-		if all([student_form.is_valid(), parent_form.is_valid(), address_form.is_valid(),
+		if all([student_form.is_valid(), parent_form.is_valid(),
 				class_selector_form.is_valid()]):
 
 			student = student_form.save(commit=False)
 			parent = parent_form.save(commit=False)
-			address = address_form.save()
 			student_class = class_selector_form.save(commit=False)
-
-			# lets link the parent and address
-			parent.address = address
-			parent.save()
 
 			# lets link the student and parent
 			student.parent = parent
 			student.save()
 
 			# lets assign a class to the student
-
 			student_class.student_id = student
 			student_class.save()
 
@@ -157,7 +150,7 @@ def teacher_information_update(request, slug):
 	"""
 	A function that is responsible for updating of teachers info
 	:param request:
-	:param pk:
+	:param slug:
 	:return:
 	"""
 	if request.method == "POST":
@@ -199,7 +192,7 @@ def teacher_details(request):
 
 
 def teacher_delete(request):
-	return JsonResponse({'html_form':"fuck you"})
+	return JsonResponse({'html_form':request})
 
 
 def teachers_view(request):
@@ -223,21 +216,107 @@ def teachers_view(request):
 		return render(request, template, context)
 
 
-def student_details(request ,slug):
+def parent_list(request):
+	"""
+
+	:param request:
+	:return:
+	"""
+	parents_qs = Parent.objects.all()
+	template = 'parents_temp/parents_view.html'
+	context = {
+		'parents':parents_qs,
+	}
+	return render(request, template, context)
+
+
+def parents_details(request):
+	parent_qs = get_object_or_404(Parent, pk=request.GET['post_id'])
+	template = 'parents_temp/parents_details.html'
+	context = {
+		'parent':parent_qs,
+	}
+	html_form = render_to_string(template, context, request=request)
+	return JsonResponse({'html_form': html_form})
+
+
+def parent_update(request, slug):
+	if request.method == "POST":
+		parent_inst = get_object_or_404(Parent, pk=slug)
+		parent_form = ParentForm(request.POST, instance=parent_inst)
+		if parent_form.is_valid():
+			parent_form.save()
+			messages.info(request, "{} edited successfully".format(parent_inst))
+			return redirect('/admissions/parents/')
+		else:
+			return HttpResponse(parent_form.errors)
+	else:
+		parent_inst = get_object_or_404(Parent, pk=slug)
+		parent_form = ParentForm(instance=parent_inst)
+		context = {
+			'parent_form':parent_form,
+			'parent':parent_inst,
+		}
+		template = 'parents_temp/parents_update.html'
+		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
+
+
+def student_view(request):
+	"""
+	a function to view student list
+	:param request:
+	:return:
+	"""
+
+	student_qs = Student.objects.all()
+	context = {
+		'students': student_qs,
+	}
+	template = 'students_temp/students_view.html'
+	return render(request, template, context)
+
+
+def student_details(request):
 	"""
 	this is a function to view student details,
 	takes in the admission number as slug and
 	query the db for any student with the same admission number
 	:param request:
-	:param slug:
 	:return:
 	"""
-	student_qs = get_object_or_404(Student, pk=slug)
-
-	template = 'student_details.html'
+	student_qs = get_object_or_404(Student, pk=request.GET['post_id']) # get the student instance or return 404 Error
+	template = 'students_temp/student_details.html'
 	context = {
 		'student': student_qs,
 	}
+	return JsonResponse({'html_form': render_to_string(template, context, request=request)})
 
-	return render(request, template, context)
 
+def student_update(request, slug):
+	if request.method == "POST":
+		student_inst = get_object_or_404(Student, pk=slug)
+		student_form = StudentForm(request.POST, instance=student_inst, prefix='student_form' )
+		parent_form = ParentForm(request.POST, prefix='parent_form', instance=student_inst.parent)
+		if all([student_form.is_valid(), parent_form.is_valid()]):
+			parent = parent_form.save()
+			student = student_form.save(commit=False)
+			# link parent to student
+			student.parent = parent
+			student.save()
+
+			messages.info(request, "{}\'s information updated successfully".format(student_inst))
+			return redirect('/admissions/students_view/')
+		else:
+			return HttpResponse(parent_form.errors)
+
+	else:
+		student_inst = get_object_or_404(Student, pk=request.GET['post_id'])
+		student_form = StudentForm(prefix='student_form', instance=student_inst)
+		parent_form = ParentForm(prefix='parent_form', instance=student_inst.parent)
+		context = {
+			'student_form': student_form,
+			'parent_form': parent_form,
+			'student': student_inst,
+		}
+		template = 'students_temp/student_info_update.html'
+		return JsonResponse({'html_form':render_to_string(template, context, request=request)})

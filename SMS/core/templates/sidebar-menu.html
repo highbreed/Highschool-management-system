@@ -15,13 +15,13 @@
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{% url 'admissions:parents_view' %}" class="nav-link">
                 <i class="nav-icon fas fa-user-tie"></i>
                 <p>Parents Information</p>
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" class="nav-link">
+            <a href="{% url 'admissions:students_view' %}" class="nav-link">
                 <i class="nav-icon fas fa-user-graduate"></i>
                 <p>Students Information</p>
             </a>
@@ -54,30 +54,47 @@
             <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-school"></i>
                 <p>
-                    School Management
+                    Class Management
                     <i class="fas fa-angle-left right"></i>
                 </p>
             </a>
             <ul class="nav nav-treeview">
                 <li class="nav-item">
-                    <a href="pages/UI/general.html" class="nav-link">
+                    <a href="{% url 'academic:class_management' %}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
-                        <p>Manage Classes</p>
+                        <p>Manage ClassRooms</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="pages/UI/buttons.html" class="nav-link">
+                    <a href="{% url 'academic:stream_management' %}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Manage Streams</p>
                     </a>
                 </li>
             </ul>
         </li>
-        <li class="nav-item">
+        <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-tasks"></i>
-                <p>Class Subjects</p>
+                <p>
+                    Subject Management
+                    <i class="fas fa-angle-left right"></i>
+                </p>
             </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'academic:subject_management' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Subjects Offered</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'academic:class_subject' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Class Subjects</p>
+                    </a>
+                </li>
+            </ul>
         </li>
         <li class="nav-item has-treeview">
             <a href="#" class="nav-link">
@@ -112,7 +129,7 @@
             </a>
             <ul class="nav nav-treeview">
                 <li class="nav-item">
-                    <a href="pages/UI/general.html" class="nav-link">
+                    <a href="{% url 'academic:student_attendance' %}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Manage Attendance</p>
                     </a>

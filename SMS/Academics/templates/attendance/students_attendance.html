@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title title">
+            <i class="fas fa-calendar"></i>
+            Attendance Management
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row d-flex justify-content-center">
+            <div class="col-md-4">
+               <div class="form-group">
+                   <select class="form-control select2" id="class-subject">
+                       <option value="none" selected disabled hidden>
+                              Select a Class
+                       </option>
+                       {% for classroom in classrooms %}
+                        <option value="{{ classroom.pk }}">{{ classroom }}</option>
+                       {% endfor %}
+                  </select>
+               </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <a class="btn btn-primary js-get-subject">
+                        <font color="white">
+                            <i class="far fa-calendar-check"></i>
+                            Get Attendance
+                        </font>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center" style="padding-top:20px;">
+            <div class="col-md-12">
+                <div class="card" id="subject-view">
+                    <div class="card-content">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- modals -->
+<div class="modal fade" id="modal-add-subject">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{% endblock content %}
+
+{% block extra_scripts %}
+<script>
+    $('.js-get-subject').click(function(){
+        var class_id;
+        class_id = $('#class-subject :selected').val();
+        $.ajax({
+            url: '{% url 'academic:student_attendance' %}',
+            dataType: 'json',
+            data: {
+                 post_id: class_id,
+            },
+            success: function(data){
+                 $("#subject-view .card-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+{% endblock %}

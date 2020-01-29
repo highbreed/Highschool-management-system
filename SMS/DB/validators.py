@@ -21,7 +21,6 @@ def subject_validator(value):
 
 def stream_validator(value):
 	from .models import Stream
-
 	if Stream.objects.filter(name=value).exists():
 		raise ValidationError(_('{} stream already exists...!!!'.format(value)))
 

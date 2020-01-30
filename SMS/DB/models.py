@@ -303,7 +303,7 @@ class StudentClass(models.Model):
 	"""
 
 	student_id = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_class')
-	main_class = models.ForeignKey(ClassRoom, on_delete=models.CASCADE)
+	main_class = models.ForeignKey(ClassRoom, on_delete=models.CASCADE, related_name='class_student')
 	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
 
 	def __str__(self):
@@ -432,4 +432,18 @@ class StudentAttendance(models.Model):
 
 	def __str__(self):
 		return str(self.student_id)
+
+
+class ExaminationListHandler(models.Model):
+	name = models.CharField(max_length=100)
+	start_on_date = models.DateField()
+	ends_on_date = models.DateField()
+	status = models.CharField(max_length=20, blank=True, null=True)
+	classrooms_affected = models.ManyToManyField(ClassRoom, related_name='class_exams')
+	comments = models.CharField(max_length=200, blank=True, null=True, help_text="Comments Regarding Exam")
+	created_by = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
+	created_on = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.name
 

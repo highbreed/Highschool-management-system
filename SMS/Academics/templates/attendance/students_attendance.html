@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load crispy_forms_tags %}
 {% block content %}
 <div class="card card-primary">
     <div class="card-header">
@@ -9,68 +9,35 @@
         </h3>
     </div>
     <div class="card-body">
-        <div class="row d-flex justify-content-center">
-            <div class="col-md-4">
-               <div class="form-group">
-                   <select class="form-control select2" id="class-subject">
-                       <option value="none" selected disabled hidden>
-                              Select a Class
-                       </option>
-                       {% for classroom in classrooms %}
-                        <option value="{{ classroom.pk }}">{{ classroom }}</option>
-                       {% endfor %}
-                  </select>
-               </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <a class="btn btn-primary js-get-subject">
-                        <font color="white">
-                            <i class="far fa-calendar-check"></i>
-                            Get Attendance
-                        </font>
-                    </a>
+         <form class="select-class" method="post" action="#">
+             {% csrf_token %}
+            <div class="row ">
+                <div class="col-md-12">
+                    <div class="form-row">
+                        <div class="form-group col-md-6 mb-0">
+                            {{ class_form.class_name|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-6 mb-0">
+                            <input type="text" id="datepicker" placeholder="Select Date " name="attendance_date" required="True">
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="row d-flex justify-content-center" style="padding-top:20px;">
-            <div class="col-md-12">
-                <div class="card" id="subject-view">
-                    <div class="card-content">
-
+                <div class="com-md-6 mb-0">
+                    <div class="form-group com-md-4 mb-0">
+                        <input type="submit" class="btn btn-primary" value="GET Class Attendance">
                     </div>
                 </div>
             </div>
-        </div>
+         </form>
     </div>
-</div>
-<!-- modals -->
-<div class="modal fade" id="modal-add-subject">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
 </div>
 {% endblock content %}
 
 {% block extra_scripts %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script>
-    $('.js-get-subject').click(function(){
-        var class_id;
-        class_id = $('#class-subject :selected').val();
-        $.ajax({
-            url: '{% url 'academic:student_attendance' %}',
-            dataType: 'json',
-            data: {
-                 post_id: class_id,
-            },
-            success: function(data){
-                 $("#subject-view .card-content").html(data.html_form);
-            }
-        });
+    $( function() {
+        $( "#datepicker" ).datepicker();
     });
 </script>
 {% endblock %}

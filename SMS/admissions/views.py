@@ -73,8 +73,8 @@ def student_admission(request):
 		if all([student_form.is_valid(), parent_form.is_valid(),
 				class_selector_form.is_valid()]):
 
+			parent = parent_form.save()
 			student = student_form.save(commit=False)
-			parent = parent_form.save(commit=False)
 			student_class = class_selector_form.save(commit=False)
 
 			# lets link the student and parent
@@ -93,12 +93,11 @@ def student_admission(request):
 			else:
 				return HttpResponse('Edit form')
 		else:
-			return HttpResponse('form not valid')
+			return HttpResponse(student_form.errors)
 
 	else:
 		student_form = StudentForm(prefix='student_form')
 		parent_form = ParentForm(prefix='parent_form')
-		address_form = AddressForm(prefix='address_form')
 		class_selector_form = StudentClassSelectorForm(prefix='class_selector_form')
 
 		template = 'student_admission.html'
@@ -106,7 +105,6 @@ def student_admission(request):
 		context = {
 			'student_form': student_form,
 			'parent_form': parent_form,
-			'address_form': address_form,
 			'class_selector_form': class_selector_form,
 		}
 

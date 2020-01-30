@@ -19,6 +19,9 @@ urlpatterns = [
 	path('get_subjects/', views.get_subjects, name='get_subjects'),
 	path('add_class_subject/<str:slug>/', views.add_class_subject, name='add_class_subject'),
 	path('edit_class_subject/<str:slug>/', views.edit_class_subject, name='edit_class_subject'),
-	path('students_attendance/', views.students_attendance_management, name='student_attendance'),
+	path('exam_management/', views.examination_management, name='exam_management'),
+	path('add_exam/', views.add_examination, name='add_exam'),
+	path('edit_exam/<str:slug>/', views.edit_examination, name='edit_exam'),
+
 
 ]

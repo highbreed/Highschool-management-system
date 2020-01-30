@@ -98,6 +98,8 @@
 {% endblock content%}
 
 {% block extra_scripts %}
+<script src="{% static 'plugins/datatables/jquery.dataTables.js' %}"></script>
+<script src="{% static 'plugins/datatables-bs4/js/dataTables.bootstrap4.js' %}"></script>
 <script>
     $('.js-add-teacher').click(function(){
         $.ajax({
@@ -154,6 +156,19 @@
             }
         });
         return false;
+    });
+</script>
+<script>
+    $(document).ready(function(){
+        $('#example').DataTable({
+          "paging": true,
+          "lengthChange": true,
+          "searching": true,
+          "ordering": true,
+          "info": true,
+          "autoWidth": true,
+          responsive: true,
+        });
     });
 </script>
 {% endblock %}

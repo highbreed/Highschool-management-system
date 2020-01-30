@@ -19,4 +19,5 @@ urlpatterns = [
 	path('students_view/', views.student_view, name='students_view'),
 	path('students_update/<str:slug>/', views.student_update, name='student_edit'),
 
+
 ]

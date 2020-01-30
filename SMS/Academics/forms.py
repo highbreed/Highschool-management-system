@@ -1,7 +1,9 @@
 from django import forms
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
-from DB.models import School, Subject, ClassRoom, Stream,  SubjectAllocation, StudentAttendance
+# noinspection PyUnresolvedReferences
+from DB.models import School, Subject, ClassRoom, Stream\
+	,  SubjectAllocation, StudentAttendance, ExaminationListHandler
 from django.forms import CheckboxSelectMultiple
 
 
@@ -56,16 +58,10 @@ class StreamRegForm(forms.ModelForm):
 		self.helper.add_input(Submit('submit', 'Save'))
 
 
-class ClassLinkForm(forms.Form):
+class ClassRoomSelector(forms.Form):
 
 	class_name = forms.ModelChoiceField(queryset=ClassRoom.objects.all(), help_text='Choose a class')
-	stream_name = forms.ModelChoiceField(queryset=Stream.objects.all(), help_text='select a stream')
-
-	def __init__(self, *args, **kwargs):
-		super().__init__(*args, **kwargs)
-		self.helper = FormHelper()
-		self.helper.form_method = 'post'
-		self.helper.add_input(Submit('submit', 'Save'))
+	attendance_date = forms.DateField(help_text="select the date to register")
 
 
 class SubjectAllocationForm(forms.ModelForm):
@@ -89,6 +85,20 @@ class StudentsAttendanceForm(forms.ModelForm):
 		fields = '__all__'
 		exclude = [
 			'classroom_id',
-			'attendance_date',
+			'student_id'
 			'siqned_by',
 		]
+
+
+class ExaminationRegForm(forms.ModelForm):
+	class Meta:
+		model = ExaminationListHandler
+		fields = '__all__'
+		exclude = [
+			'created_by',
+		]
+		widgets = {
+			'classrooms_affected': CheckboxSelectMultiple(),
+			'start_on_date': forms.DateInput(attrs={'id': 'datetimepicker12', 'placeholder':'2020-01-30'}),
+			'ends_on_date': forms.DateInput(attrs={'id': 'datetimepicker', 'placeholder':'2020-01-30'}),
+		}

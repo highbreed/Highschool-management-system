@@ -3,10 +3,13 @@ from django.contrib import messages
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponse
 
-from .forms import ClassRoomRegForm, StreamRegForm, SubjectRegForm, SubjectAllocationForm, StudentsAttendanceForm
+
+from .forms import ClassRoomRegForm, StreamRegForm, SubjectRegForm\
+	, SubjectAllocationForm, ExaminationRegForm
 # noinspection PyUnresolvedReferences
 from DB.models import ClassRoom, Stream, Student, StudentClass\
-	, Subject,  SubjectAllocation, AcademicYear, Term, StudentAttendance
+	, Subject,  SubjectAllocation, AcademicYear, Term, StudentAttendance\
+	,ExaminationListHandler, Teacher
 
 
 def class_management(request):
@@ -16,7 +19,6 @@ def class_management(request):
 	}
 	template = 'class_management_temp/class_management.html'
 	return render(request, template, context)
-
 
 def add_class(request):
 	class_form = ClassRoomRegForm()
@@ -35,7 +37,6 @@ def add_class(request):
 			'class_form': class_form,
 		}
 		return 	JsonResponse({'html_form':render_to_string(template, context, request=request)})
-
 
 def edit_class_room(request, slug):
 	if request.method == 'POST':
@@ -57,7 +58,6 @@ def edit_class_room(request, slug):
 		}
 		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
 
-
 def classroom_view(request, slug):
 	# db query
 	classroom_qs = get_object_or_404(ClassRoom, pk=slug) # lets get the classroom object
@@ -78,7 +78,6 @@ def classroom_view(request, slug):
 	template = 'class_management_temp/classroom_details.html'
 	return render(request, template, context)
 
-
 def stream_management(request):
 	stream_qs = Stream.objects.all()
 	template = 'class_management_temp/stream_management.html'
@@ -86,7 +85,6 @@ def stream_management(request):
 		'streams': stream_qs,
 	}
 	return render(request, template, context)
-
 
 def add_stream(request):
 	if request.method == 'POST':
@@ -105,7 +103,6 @@ def add_stream(request):
 			'class_form': stream_form,
 		}
 		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
-
 
 def edit_stream(request, slug):
 	if request.method == "POST":
@@ -128,7 +125,6 @@ def edit_stream(request, slug):
 		template = 'class_management_temp/edit_stream.html'
 		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
 
-
 def subject_management(request):
 	subject_qs = Subject.objects.all()
 	context = {
@@ -136,7 +132,6 @@ def subject_management(request):
 	}
 	template = 'class_management_temp/subject_management.html'
 	return render(request, template, context)
-
 
 def add_subject(request):
 	if request.method == 'POST':
@@ -155,7 +150,6 @@ def add_subject(request):
 			'subject_form':subject_form,
 		}
 		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
-
 
 def edit_subject(request, slug):
 	if request.method == "POST":
@@ -177,7 +171,6 @@ def edit_subject(request, slug):
 			'subject':subject_inst,
 		}
 		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
-
 
 def class_subjects(request):
 	classroom_qs = ClassRoom.objects.all()
@@ -230,7 +223,6 @@ def add_class_subject(request, slug):
 		}
 		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
 
-
 def edit_class_subject(request, slug):
 	if request.method == "POST":
 		subject_inst = get_object_or_404(SubjectAllocation, pk=slug)
@@ -249,24 +241,55 @@ def edit_class_subject(request, slug):
 		context = {
 			'subject_form':subject_form,
 			'subject':subject_inst,
+
 		}
 		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
 
+def examination_management(request):
+	exams_list_qs = ExaminationListHandler.objects.all()
+	template = 'exam_management_temp/exam_management.html'
+	context = {
+		'exam_list':exams_list_qs,
+	}
+	return render(request, template, context)
 
-def students_attendance_management(request):
-	if 'post_id' in request.GET:
-		classroom_id = get_object_or_404(ClassRoom, pk=request.GET['post_id'])
-		attendance_form = StudentsAttendanceForm()
-		template = 'attendance/students_attendance_table.html'
-		context = {
-			'attendance_from':attendance_form,
-		}
-		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
+def add_examination(request):
+	if request.method == 'POST':
+		exam_form = ExaminationRegForm(request.POST)
+		if exam_form.is_valid():
+			exam_form.save()
+			messages.info(request, "{} added Successful".format(exam_form.cleaned_data['name']))
+			return redirect('/academic/exam_management/')
+		else:
+			messages.info(request, "Input Error: {} could not be added,"
+								   " please check your details and add again".format(exam_form.cleaned_data['name']))
+			return redirect('/academic/exam_management/')
 	else:
-		classroom_qs = ClassRoom.objects.all()
-		template = 'attendance/students_attendance.html'
+		exam_form = ExaminationRegForm()
+		template = 'exam_management_temp/add_exam.html'
 		context = {
-			'classrooms':classroom_qs,
+			'exam_form': exam_form,
 		}
-		return render(request, template, context)
+		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
 
+def edit_examination(request, slug):
+	if request.method == "POST":
+		exam_inst = get_object_or_404(ExaminationListHandler, pk=slug)
+		exam_form = ExaminationRegForm(request.POST, instance=exam_inst)
+		if exam_form.is_valid():
+			exam_form.save()
+			messages.info(request, "{} edited successfully".format(exam_form.cleaned_data['name']))
+			return redirect('/academic/exam_management/')
+		else:
+			messages.info(request, "{} not edited check your information and enter "
+								   "again".format(exam_form.cleaned_data['name']))
+			return redirect('/academic/exam_management/')
+	else:
+		exam_inst = get_object_or_404(ExaminationListHandler, pk=request.GET['post_id'])
+		exam_form = ExaminationRegForm(instance=exam_inst)
+		template = 'exam_management_temp/edit_exam.html'
+		context = {
+			'exam_form':exam_form,
+			'exam': exam_inst,
+		}
+		return JsonResponse({'html_form':render_to_string(template, context, request=request)})

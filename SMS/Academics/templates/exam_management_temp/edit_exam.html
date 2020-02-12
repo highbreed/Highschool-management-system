@@ -30,13 +30,16 @@
                                 {{ exam_form.ends_on_date|as_crispy_field }}
                             </div>
                              <div class="form-group col-md-12 mb-0">
-                                {{ exam_form.classrooms_affected|as_crispy_field }}
+                                {{ exam_form.classrooms|as_crispy_field }}
                             </div>
                             <div class="form-group col-md-6 mb-0">
+                                {{ exam_form.academic_term|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ exam_form.out_of|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-12 mb-0">
                                 {{ exam_form.comments|as_crispy_field }}
-                            </div>
-                            <div class="form-group col-md-6 mb-0">
-                                {{ exam_form.status|as_crispy_field }}
                             </div>
                         </div>
                     </div>

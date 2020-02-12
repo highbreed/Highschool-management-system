@@ -21,8 +21,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'^', include('core.urls')),
-    url(r'^academic/', include('Academics.urls')),
-    url(r'^admissions/', include('admissions.urls')),
-    #url(r'^student/', include('student.urls')),
+    path('', include('core.urls')),
+    path('academic/', include('Academics.urls')),
+    path('admissions/', include('admissions.urls')),
+    path('attendance/', include('attendance.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

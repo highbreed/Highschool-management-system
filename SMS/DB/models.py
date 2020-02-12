@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -84,7 +85,6 @@ class Address(models.Model):
 	def __str__(self):
 		return self.address
 
-
 class School(models.Model):
 	name = models.CharField(max_length=200)
 	address = models.ForeignKey(Address, on_delete=models.PROTECT, blank=True, null=True)
@@ -98,7 +98,6 @@ class School(models.Model):
 	def __str__(self):
 		return self.name
 
-
 class Subject(models.Model):
 	name = models.CharField(max_length=50, validators=[subject_validator])
 	subject_code = models.CharField(max_length=10, blank=True, null=True)
@@ -106,7 +105,6 @@ class Subject(models.Model):
 
 	def __str__(self):
 		return self.name
-
 
 class User(AbstractUser):
 	is_student = models.BooleanField(default=False)
@@ -134,41 +132,46 @@ class User(AbstractUser):
 			full_name = self.first_name + " " + self.last_name
 		return full_name
 
-
 class AcademicYear(models.Model):
 	"""
 	a db table row that maps on every academic year
 	"""
 	session = models.CharField(max_length=200, unique=True)
-	is_current_session = models.BooleanField(default=False, blank=True, null=True)
 	session_starts_on = models.DateField(blank=True, null=True)
-	next_session_begins = models.DateField(blank=True, null=True)
+	session_ends_on = models.DateField(blank=True, null=True)
 
 	def __str__(self):
 		return self.session
 
+	@property
+	def is_current_session(self):
+		if datetime.now().date() > self.session_ends_on:
+			return False
+		return True
 
 class Term(models.Model):
 	"""
 	a db row that maps on a term to the academic year
 	"""
 	term = models.CharField(max_length=10, choices=ACADEMIC_TERM, blank=True)
-	is_current_term = models.BooleanField(default=False, blank=True, null=True)
-	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, blank=True, null=True, related_name='acasemic_tearm')
-	term_ends_on = models.DateField(blank=True, null=True)
-	next_term_begins = models.DateField(null=True, blank=True)
+	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, blank=True, null=True, related_name='academic_term')
+	term_start_on = models.DateField(blank=True, null=True)
+	term_ends_on = models.DateField(null=True, blank=True)
 
 	def __str__(self):
 		return self.term
 
-
+	@property
+	def is_current_term(self):
+		if datetime.now().date() > self.term_ends_on:
+			return False
+		return True
 
 class Stream(models.Model):
 	name = models.CharField(max_length=50, validators=[stream_validator])
 
 	def __str__(self):
 		return self.name
-
 
 class Teacher(models.Model):
 	teacher_id = models.AutoField(primary_key=True)
@@ -193,7 +196,6 @@ class Teacher(models.Model):
 
 	def __str__(self):
 		return "{} {}".format(self.first_name, self.last_name)
-
 
 class ClassRoom(models.Model):
 	name = models.CharField(max_length=50)
@@ -233,7 +235,6 @@ class ClassRoom(models.Model):
 		else:
 			super(ClassRoom, self).save()
 
-
 class SubjectAllocation(models.Model):
 	"""
 	A model to allocate subjects to respective teacher t the school
@@ -250,7 +251,6 @@ class SubjectAllocation(models.Model):
 	def subjects_data(self):
 		for data in self.subjects.all():
 			return data
-
 
 class Parent(models.Model):
 	"""
@@ -271,7 +271,6 @@ class Parent(models.Model):
 
 	def __str__(self):
 		return "{} {}".format(self.first_name, self.last_name)
-
 
 class Student(models.Model):
 	unique_id = models.AutoField(primary_key=True)
@@ -294,24 +293,24 @@ class Student(models.Model):
 		self.admission_number = assign_admission_numbers()
 		super(Student, self).save()
 
-
 class StudentClass(models.Model):
 	"""
 	This is a bridge table to link a student to a class
 	when you add a student to a class we update the selected class capacity
 
 	"""
-
-	student_id = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_class')
 	main_class = models.ForeignKey(ClassRoom, on_delete=models.CASCADE, related_name='class_student')
 	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
+	student_id = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_class')
+
+	@property
+	def is_current_class(self):
+		if self.academic_year.is_current_session:
+			return True
+		return False
 
 	def __str__(self):
 		return str(self.student_id)
-
-	def student_class(self):
-		# this method returns the class a student is in
-		return str(self.main_class)
 
 	def update_class_table(self):
 		selected_class = ClassRoom.objects.get(pk=self.main_class.pk)
@@ -325,7 +324,6 @@ class StudentClass(models.Model):
 		self.update_class_table()
 		super(StudentClass, self).save()
 
-
 class CarryOverStudent(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.CASCADE)
 	class_room = models.ForeignKey(ClassRoom, on_delete=models.CASCADE)
@@ -336,7 +334,6 @@ class CarryOverStudent(models.Model):
 	def __str__(self):
 		return str(self.student)
 
-
 class RepeatingStudent(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.CASCADE)
 	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE)
@@ -344,7 +341,6 @@ class RepeatingStudent(models.Model):
 
 	def __str__(self):
 		return str(self.student)
-
 
 class Result(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -356,7 +352,6 @@ class Result(models.Model):
 	def __str__(self):
 		return str(self.student)
 
-
 class SchoolEvent(models.Model):
 	name = models.CharField(max_length=150)
 	academic_year = models.ForeignKey(AcademicYear, on_delete=models.CASCADE, blank=True)
@@ -366,7 +361,6 @@ class SchoolEvent(models.Model):
 
 	def __str__(self):
 		return self.name
-
 
 class Dormitory(models.Model):
 	name = models.CharField(max_length=150)
@@ -392,7 +386,6 @@ class Dormitory(models.Model):
 			raise  ValueError("all beds in {} are occupied:\n please add more beds or save to another dormitory".format(self.name))
 		else:
 			super(Dormitory, self).save()
-
 
 class DormitoryAllocation(models.Model):
 	student = models.ForeignKey(Student, on_delete=models.CASCADE)
@@ -420,30 +413,39 @@ class DormitoryAllocation(models.Model):
 		self.update_dormitory()
 		super(DormitoryAllocation, self).save()
 
-
-class StudentAttendance(models.Model):
-	classroom_id = models.ForeignKey(ClassRoom, on_delete=models.CASCADE, related_name='student_attendance')
-	attendance_date = models.DateField()
-	student_id = models.ForeignKey(Student, on_delete=models.CASCADE, related_name='student_attendance')
-	status = models.CharField(max_length=20, choices=ATTENDANCE_CHOICES)
-	comment = models.CharField(max_length=150, blank=True)
-	signed_by = models.ForeignKey(Teacher, on_delete=models.CASCADE)
-	date = models.DateTimeField(auto_now_add=True)
-
-	def __str__(self):
-		return str(self.student_id)
-
-
 class ExaminationListHandler(models.Model):
 	name = models.CharField(max_length=100)
 	start_on_date = models.DateField()
 	ends_on_date = models.DateField()
-	status = models.CharField(max_length=20, blank=True, null=True)
-	classrooms_affected = models.ManyToManyField(ClassRoom, related_name='class_exams')
+	out_of = models.IntegerField()
+	academic_term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name='academic_term_exam')
+	classrooms = models.ManyToManyField(ClassRoom, related_name='class_exams')
 	comments = models.CharField(max_length=200, blank=True, null=True, help_text="Comments Regarding Exam")
 	created_by = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 	created_on = models.DateTimeField(auto_now_add=True)
 
+	@property
+	def status(self):
+		if datetime.now().date() > self.start_on_date:
+			return "Done"
+		elif self.start_on_date >= datetime.now().date() >= self.ends_on_date:
+			return "on going"
+		return "Coming up"
+
 	def __str__(self):
 		return self.name
 
+	def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+		super(ExaminationListHandler, self).save()
+
+class MarksManagement(models.Model):
+	exam_name = models.ForeignKey(ExaminationListHandler, on_delete=models.CASCADE, related_name='exam_marks')
+	points_scored = models.FloatField()
+	subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='subject_marks')
+	student = models.ForeignKey(StudentClass, on_delete=models.CASCADE, related_name='student_marks')
+	created_by = models.ForeignKey(Teacher, on_delete=models.CASCADE, related_name='marks_entered')
+	date_time = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.points_scored

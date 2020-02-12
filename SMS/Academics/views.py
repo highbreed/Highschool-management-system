@@ -8,8 +8,8 @@ from .forms import ClassRoomRegForm, StreamRegForm, SubjectRegForm\
 	, SubjectAllocationForm, ExaminationRegForm
 # noinspection PyUnresolvedReferences
 from DB.models import ClassRoom, Stream, Student, StudentClass\
-	, Subject,  SubjectAllocation, AcademicYear, Term, StudentAttendance\
-	,ExaminationListHandler, Teacher
+	, Subject,  SubjectAllocation, AcademicYear, Term, \
+	ExaminationListHandler, Teacher
 
 
 def class_management(request):
@@ -293,3 +293,5 @@ def edit_examination(request, slug):
 			'exam': exam_inst,
 		}
 		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
+
+

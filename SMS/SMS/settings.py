@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'Academics',
     'admissions',
     'DB',
+    'attendance',
 
 ]
 
@@ -111,11 +112,19 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
+from  django.conf.locale.en import formats as en_formart
+
+en_formart.DATE_FORMAT =  'd-m-Y'
+en_formart.DATE_INPUT_FORMATS = ('%m/%d/%Y', '%Y-%m-%d', '%m/%d/%y', '%b %d %Y',
+                    '%b %d, %Y', '%d %b %Y', '%d %b, %Y', '%B %d %Y',
+                    '%B %d, %Y', '%d %B %Y', '%d %B, %Y','%b. %d, %Y')
+
+
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'GMT'
 
-USE_I18N = True
+#USE_I18N = True
 
 USE_L10N = True
 

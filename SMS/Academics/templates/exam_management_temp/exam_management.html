@@ -68,7 +68,7 @@
 
 {% block extra_scripts %}
 <script>
-    $('.js-add-exam').click(function(){
+    $('.js-add-exam').click('function(){
         $.ajax({
             url: '{% url 'academic:add_exam' %}',
             dataType: 'json',

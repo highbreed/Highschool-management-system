@@ -1,0 +1,58 @@
+{% load crispy_forms_tags %}
+{% load static %}
+<div class="card card-primary">
+    <div class="card-header">
+         <h3 class="card-title" >
+            <font color="white">
+                <i class="fas fa-plus"></i>
+                Event Details
+            </font>
+        </h3>
+        <div class="card-tools">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <form class="form event-schedule-form" action="{% url 'schedule:add_event' %}" method="post">
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-group col-md-6 mb-0">
+                    {{ form.title|as_crispy_field }}
+                </div>
+                <div class="form-group col-md-6 mb-0">
+                    {{form.start|as_crispy_field }}
+                </div>
+                <div class="form-group col-md-6 mb-0">
+                    {{form.end|as_crispy_field }}
+                </div>
+                <div class="form-group col-md-6 mb-0">
+                    {{ form.notes|as_crispy_field }}
+                </div>
+            </div>
+            <div class="form-row float-right">
+                <input class="btn btn-primary" type="submit" value="Submit">
+            </div>
+        </form>
+    </div>
+</div>
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" type="text/css" href="{% static 'plugins/datetimepicker/jquery.datetimepicker.css' %}" >
+<script src="{% static 'plugins/datetimepicker/build/jquery.datetimepicker.full.min.js' %}"></script>
+<script>
+    $( function() {
+        $( "#start-date-picker" ).datetimepicker({
+                format:'m/d/Y H:i'
+        });
+    });
+</script>
+<script>
+    $( function() {
+        $( "#end-date-picker" ).datetimepicker({
+                format:'m/d/Y  H:i'
+        });
+    });
+
+</script>

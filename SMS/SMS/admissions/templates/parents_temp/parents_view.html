@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block extra_scripts %}
+<script>
+    $('.js-update-parent').click(function(){
+        var user_id = $(this);
+        $.ajax({
+            url: '{% url 'admissions:parent_edit' slug=1 %}',
+            dataType: 'json',
+            data: {
+                 post_id: user_id.attr("data-link")
+            },
+            success: function(data){
+                 $("#modal-parent .modal-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+<script>
+    $('.js-view-parent ').click(function(){
+        var user_id;
+        user_id = $(this).attr("data-link");
+        $.ajax({
+            url: '{% url 'admissions:parent_details' %}',
+            dataType: 'json',
+            data: {
+                 post_id: user_id
+            },
+            success: function(data){
+                 $("#modal-parent .modal-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+<script>
+    $("#modal-parent").on("submit", 'js-parent-registration', function(){
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            data: form.serialize(),
+            type: form.attr("method"),
+            dataType: 'json',
+            success: function(data){
+                 $("#modal-parent .modal-content").html(data.html_form);
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock extra_scripts %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header" style="background-color:#007bff">
+        <h3 class="card-title title">
+            <font color="white">
+                <i class="fas fa-question-circle"></i>
+                    Parents Information
+            </font>
+        </h3>
+    </div>
+    <div class="card-body col-12">
+        <table id="example" class="table table-striped">
+            <thead>
+            <tr>
+                <th> No:</th>
+                <th>Photo</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>phone</th>
+                <th>Children</th>
+                <th>Address</th>
+                <th>Available Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for parent in parents %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <div class="img-hover">
+                            <img class="img-circle rounded-circle img-responsive"
+                                 src="/media/{{ parent.image }}"
+                                 alt="User profile picture" style="height:50px; width:60px;">
+                        </div>
+                    </td>
+                    <td>{{ parent }}</td>
+                    <td>{{ parent.email }}</td>
+                    <td>{{ parent.phone_number }}</td>
+                    <td>{% for children in parent.child.all %} {{ children }} {% endfor %}</td>
+                    <td>{{ parent.address }}</td>
+                    <td>
+                        <a href="#modal-parent" data-toggle="modal" data-link="{{ parent.pk }}" class="btn btn-primary btn-sm js-view-parent">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="#modal-parent" data-toggle="modal" data-link="{{ parent.pk }}" class="btn btn-warning btn-sm js-update-parent">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="card-footer">
+        <a href="#">Next</a>
+    </div>
+</div>
+<!-- modals -->
+<div class="modal   fade" id="modal-parent">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content ">
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{% endblock content %}

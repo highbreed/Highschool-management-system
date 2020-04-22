@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title title">
+            <i class="fas fa-calendar"></i>
+            Students Attendance Report
+        </h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-center" id="get-attendance">
+                <form method="post"   id="js-get-attendance_form" action="{% url 'attendance:students_attendance_report' %}">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            {{ choice_form.class_name|as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-4">
+                            {{ choice_form.date_field | as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-2">
+                            <input type="submit" class="btn btn-primary" value="Manage Attendance">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card" id="attendance_table">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_scripts %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script>
+    $( function() {
+        $( ".dateinput" ).datepicker({ dateFormat: 'yy-mm-dd' });
+    });
+</script>
+<script>
+    $("#get-attendance").on("submit", '#js-get-attendance_form', function(){
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            data: form.serialize(),
+            type: form.attr("method"),
+            dataType: 'json',
+            success: function(data){
+                 $("#attendance_table").html(data.html_form);
+            }
+        });
+        return false;
+    });
+</script>
+
+{% endblock %}

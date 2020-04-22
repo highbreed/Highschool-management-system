@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block page_header %}
+<div class="col-sm-6">
+    <ol class="breadcrumb float-sm-left">
+        <li class="breadcrumb-item"><a href="{% url 'admissions:dashboard' %}">Home</a></li>
+        <li class="breadcrumb-item active"><a href="#">Dashboard v1</a></li>
+    </ol>
+</div>
+{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="content">
+                <form  method="post">
+                    {% csrf_token %}
+                    <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            <div class="form-row">
+                                <div class="form-group col-md-12 mb-0">
+                                    <h4 class="title text-center">Teachers Details</h4>
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.first_name|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.middle_name|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.last_name|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.gender|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.nationality|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.national_id|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12 mb-0">
+                                    <h4 class="title text-center">Specialization</h4>
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ teacher_form.subject_specialization|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-6 mb-0">
+                                    {{ teacher_form.designation|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-md-12 mb-0">
+                                    <h4 class="title text-center">Address</h4>
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.address|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.email|as_crispy_field }}
+                                </div>
+                                <div class="form-group col-md-4 mb-0">
+                                    {{ teacher_form.phone_number|as_crispy_field }}
+                                </div>
+                            </div>
+                        <input type="submit" value="SUBMIT" class="btn btn-primary">
+                    </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

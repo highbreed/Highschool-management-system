@@ -424,6 +424,7 @@ class ExaminationListHandler(models.Model):
 	created_by = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
 	created_on = models.DateTimeField(auto_now_add=True)
 
+	# noinspection PyTypeChecker
 	@property
 	def status(self):
 		if datetime.now().date() > self.start_on_date:

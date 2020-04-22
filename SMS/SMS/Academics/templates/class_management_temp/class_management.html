@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-primary">
+    <div class="card-header">
+         <h3 class="card-title title">
+            <font color="white">
+                <i class="fas fa-question-circle"></i>
+                    Class Management
+            </font>
+        </h3>
+        <div class="float-right">
+            <a href="#modal-add-class" class="btn btn-primary js-add-class"  data-toggle="modal">
+                <font color="white">
+                    <i class="fas fa-user-plus"></i>
+                    Add Class
+                </font>
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="example" class="table table-striped ">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Class Name</th>
+                <th>Capacity</th>
+                <th>Class Teacher</th>
+                <th>Available Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for class_room in class_rooms %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ class_room }}</td>
+                    <td>{{ class_room.capacity }}</td>
+                    <td>{{ class_room.class_teacher| capfirst }}</td>
+                    <td>
+                        <a href="{% url 'academic:class_details' slug=class_room.pk %}" class="btn btn-primary btn-sm">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="#modal-add-class" data-toggle="modal" data-link="{{ class_room.pk }}" class="btn btn-warning btn-sm js-update-class">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="#modal-add-class" data-toggle="modal" data-link="{{ class_room.pk }}" class="btn btn-danger btn-sm js-delete-class">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!-- modals -->
+<div class="modal fade" id="modal-add-class">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{% endblock content %}
+{% block extra_scripts %}
+<script>
+    $('.js-add-class').click(function(){
+        $.ajax({
+            url: '{% url 'academic:add_class' %}',
+            dataType: 'json',
+            success: function(data){
+                 $("#modal-add-class .modal-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+<script>
+    $('.js-update-class').click(function(){
+        var user_id;
+        user_id = $(this).attr("data-link");
+        $.ajax({
+            url: '{% url 'academic:edit_classroom' slug=2 %}',
+            dataType: 'json',
+            data: {
+                 post_id: user_id
+            },
+            success: function(data){
+                 $("#modal-add-class .modal-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+<script>
+    $("#modal-add-class").on("submit", 'js-class-registration', function(){
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            data: form.serialize(),
+            type: form.attr("method"),
+            dataType: 'json',
+            success: function(data){
+                 $("#modal-add-class .modal-content").html(data.html_form);
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock %}

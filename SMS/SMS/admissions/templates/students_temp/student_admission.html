@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block header %}
+
+{% endblock %}
+{% block page_header %}
+
+{% endblock %}
+{% block content %}
+<div class="card card-primary">
+    <div class="card-header ">
+        <h3 class="card-title title">
+            <i class="fas fa-plus"></i>
+            Students Admissions
+        </h3>
+    </div>
+    <div class="card-body">
+        <form  method="post" action="{% url 'admissions:student_admission' %}" enctype='multipart/form-data'>
+            {% csrf_token %}
+            <div class="row">
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <div class="form-row">
+                            <div class="form-group col-md-12 mb-0">
+                                <h4 class="title text-center">Students Information</h4>
+                            </div>
+                            <div class="form-group col-4 ">
+                                {{ student_form.first_name|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ student_form.middle_name|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ student_form.last_name|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ student_form.gender|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ student_form.date_of_birth|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ student_form.nationality|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ student_form.religion|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-4 mb-0">
+                                {{ student_form.image|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-12 mb-0" style="padding-top:5px;">
+                                <h4 class="title text-center">Academic Information</h4>
+                            </div>
+                            <div class="form-group col-md-4 mb-0">
+                                {{ student_form.former_school|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-4 mb-0">
+                                {{ student_form.former_gpa|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-4 mb-0">
+                                {{ student_form.notes|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-4 mb-0">
+                                {{ student_form.academic_records|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-4 mb-0">
+                                {{ student_form.class_room|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-4 mb-0">
+                                {{ student_form.grade_level|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-12 mb-0">
+                                <h4 class="title text-center" style="padding-top:5px;">Medical History</h4>
+                            </div>
+                            <div class="form-group col-md-4 mb-0">
+                                {{ student_form.medical_history|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-4 mb-0">
+                                {{ student_form.blood_group|as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-4 mb-0">
+                                {{ student_form.medical_file|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12 mb-0">
+                        <h4 class="title text-center">Parents Information</h4>
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                         {{ parent_form.first_name|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.middle_name|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.last_name|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.gender|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.occupation|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.monthly_income|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.nationality|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.national_id|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.parent_type|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.single_parent |as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.image|as_crispy_field }}
+                    </div>
+
+                    <div class="form-group col-md-12 mb-0">
+                        <h4 class="title text-center">Address</h4>
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.address|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.alt_email|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-4 mb-0">
+                        {{ parent_form.phone_number|as_crispy_field }}
+                    </div>
+                </div>
+            </div>
+            <div class="float-right">
+                    <input type="submit" class="btn btn-primary"  value="Submit">
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script>
+    $( function() {
+        $( ".datetimepicker" ).datepicker();
+    });
+</script>
+{% endblock %}

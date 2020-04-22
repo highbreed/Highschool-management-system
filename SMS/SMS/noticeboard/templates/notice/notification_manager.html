@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<div class="col-md-12">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title" >
+                    <font color="white">
+                        <i class="fas fa-question-circle"></i>
+                        Notice Board Management
+                    </font>
+            </h3>
+            <a class="btn btn-primary float-right js-add-notice" href="#modal-notice" data-toggle="modal">
+                <i class="fas fa-plus" style="padding-right: 3px;"></i>
+                Post New Notice
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Notice Date</th>
+                            <th>Title</th>
+                            <th>Notice</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for notice in notifications %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ notice.date }}</td>
+                                <td>{{ notice.title }}</td>
+                                <td>{{ notice.description }}</td>
+                                <td>
+                                    <a href="#modal-notice" data-toggle="modal" data-link="{{ notice.pk }}" class="btn btn-warning btn-sm js-update-notice">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <a href="#modal-delete" data-toggle="modal" data-link="{{ notice.pk }}" class="btn btn-danger btn-sm js-delete-notice">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--modals -->
+<div class="modal fade" id="modal-notice">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{% endblock content %}
+
+{% block extra_scripts %}
+<script>
+    $('.js-add-notice').click(function(){
+        $.ajax({
+            url: '{% url 'noticeboard:add_notification' %}',
+            dataType: 'json',
+            success: function(data){
+                 $("#modal-notice .modal-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+<script>
+    $('.js-update-notice').click(function(){
+        var user_id;
+        user_id = $(this).attr("data-link");
+        $.ajax({
+            url: '{% url 'noticeboard:edit_notification' notice_id=1 %}',
+            type: 'GET',
+            dataType: 'json',
+            data: {
+                 post_id: user_id
+            },
+            success: function(data){
+                 $("#modal-notice .modal-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+<script>
+    $("#modal-notice").on("submit", '.js-add-notice', function(){
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            data: form.serialize(),
+            type: form.attr("method"),
+            dataType: 'json',
+            success: function(data){
+                 alert(data.message);
+            },
+            error: function(data){
+                alert(data.message);
+            }
+        });
+        return false;
+    });
+</script>
+{% endblock extra_scripts %}

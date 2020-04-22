@@ -1,0 +1,305 @@
+<nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+        <li class="nav-item">
+            <a href="{% url 'core:dashboard' %}" class="nav-link">
+                <i class="nav-icon fab fa-windows"></i>
+                <p>Dashboard</p>
+            </a>
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-school"></i>
+                <p>
+                    School Setup
+                    <i class="fas fa-angle-left right"></i>
+                    <!--span class="badge badge-info right">6</span -->
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'schedule:marking_period_dsh' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Marking Periods</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'schedule:school_calender' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Calender</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'schedule:school_periods' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Periods</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'schedule:school_info' %}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>School Information</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'admissions:teachers_view' %}" class="nav-link">
+                <i class="nav-icon fas fa-chalkboard-teacher"></i>
+                <p>Teachers Information</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'admissions:parents_view' %}" class="nav-link">
+                <i class="nav-icon fas fa-user-tie"></i>
+                <p>Parents Information</p>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'admissions:students_view' %}" class="nav-link">
+                <i class="nav-icon fas fa-user-graduate"></i>
+                <p>Students Information</p>
+            </a>
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-user-cog"></i>
+                <p>
+                    Student Management
+                    <i class="fas fa-angle-left right"></i>
+                    <!--span class="badge badge-info right">6</span -->
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'admissions:student_admission' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Student Admission</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Student Promotion</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-school"></i>
+                <p>
+                    Class Management
+                    <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'academic:class_management' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Manage ClassRooms</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'academic:stream_management' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Manage Streams</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-tasks"></i>
+                <p>
+                    Subject Management
+                    <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'academic:subject_management' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Subjects Offered</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'academic:class_subject' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Class Subjects</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-table"></i>
+                <p>
+                   Timetables
+                    <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'schedule:manage_timetable' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Timetable Manager</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'schedule:create_timetable' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>School Timetable</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/UI/buttons.html" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>MyTimetable</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-clipboard-list"></i>
+                <p>
+                   Student Attendance
+                    <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'attendance:students_attendance' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Manage Attendance</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'attendance:students_attendance_report' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Attendance Report</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-clipboard-list"></i>
+                <p>
+                   Teachers Attendance
+                    <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="pages/UI/general.html" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Manage Attendance</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/UI/buttons.html" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Attendance Report</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-trophy"></i>
+                <p>
+                    Exams Management
+                    <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'academic:exam_management' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Exams List</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/UI/buttons.html" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Exams Grades</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/UI/general.html" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Marks Management</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/UI/buttons.html" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Students Mark Sheets</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/UI/general.html" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Result Overview</p>
+                    </a>
+                </li>
+
+            </ul>
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-money-bill-alt"></i>
+                <p>
+                   Fees Management
+                    <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="pages/UI/general.html" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Students Invoices</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/UI/buttons.html" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Recent Payments</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-sms"></i>
+                <p>
+                    Notification Services
+                    <i class="fas fa-angle-left right"></i>
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'noticeboard:notification_manager' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Noticeboard</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="pages/UI/buttons.html" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Private Messages</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-file"></i>
+                <p>Notices/Events</p>
+            </a>
+        </li>
+    </ul>
+</nav>

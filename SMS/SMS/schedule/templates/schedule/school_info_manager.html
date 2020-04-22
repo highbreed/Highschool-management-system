@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title title">
+            <i class="fas fa-question-circle"></i>
+            School Information
+        </h3>
+        <div class="float-right">
+            <a class="btn btn-primary" href="#add-school-info" data-toggle="modal" id="js-add-school-info">
+                <i class="fas fa-plus"></i>
+                Add School Information
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered tablesorter">
+                    <thead>
+                    <tr>
+                        <th class="col">Name</th>
+                        <th class="col">Address</th>
+                        <th class="col">Telephone</th>
+                        <th class="col">Email</th>
+                        <th class="col">Mission</th>
+                        <th class="col">Vision</th>
+                        <th class="col">Ownership</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for school in school_qs %}
+                        <tr>
+                            <td>{{ school.name }}</td>
+                            <td>{{ school.address}}</td>
+                            <td>{{ school.telephone}}</td>
+                            <td>{{school.school_email}}</td>
+                            <td>{{school.mission}}</td>
+                            <td>{{school_vision}}</td>
+                            <td>{{ school.ownership}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="add-school-info">
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    $('#js-add-school-info').click(function(){
+        $.ajax({
+            url: "{% url 'schedule:add_school_info' %}",
+            dataType: 'json',
+            success: function(data){
+                 $("#add-school-info .modal-content").html(data.html_form);
+            }
+        });
+    });
+</script>
+<script>
+    $("#add-school-info").on("submit", '.js-school-info-form', function(){
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            data: form.serialize(),
+            type: form.attr("method"),
+            dataType: 'json',
+            success: function(data){
+                 setTimeout(function() {
+                        alert(data.message);
+                       window.location.reload();
+
+                  },4);
+            },
+            error: function(data){
+                setTimeout(function() {
+                        alert(data.message);
+                       window.location.reload();
+
+                  },4);
+            }
+        });
+
+        return false;
+
+    });
+</script>
+{% endblock %}

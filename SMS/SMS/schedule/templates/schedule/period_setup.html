@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="card card-primary js-add-period">
+    <div class="card-header">
+
+        <h3 class="card-title title">
+            <i class="fas fa-calendar"></i>
+            School Period's Management
+        </h3>
+        <div class="float-right">
+            <a class="btn btn-primary " id="add_more">
+                <font color="white">
+                    <i class="fas fa-plus"></i>
+                    Add New Period
+                </font>
+            </a>
+        </div>
+    </div>
+    <form class="form" method="post" action="{% url 'schedule:school_periods' %}" id="periodform">
+        {% csrf_token %}
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table id='periodTB' class="table no_error table-striped tablesorter table-border table-hover table-responsive">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Short Name</th>
+                            <th>Sort Oder</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Used For Attendance</th>
+                            <th>Ignore For Scheduling</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{ period_form.management_form }}
+                        {% for form in period_form.forms %}
+                        <tr class="duplicate">
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+                            <td>{{ form.name }}</td>
+                            <td>{{ form.short_name }}</td>
+                            <td>{{ form.sort_order }}</td>
+                            <td>{{ form.start_time }}</td>
+                            <td>{{ form.end_time }}</td>
+                            <td>{{ form.used_for_attendance }}</td>
+                            <td>{{ form.ignore_for_scheduling }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+
+            <div class="float-right">
+                <button type="submit"  class="btn btn-block btn-primary">Create</button>
+            </div>
+
+        </div>
+    </form>
+
+</div>
+{% endblock content %}
+
+{% block extra_scripts %}
+<!-- choose a theme file -->
+<link rel="stylesheet" href="{% static 'plugins/tablesorter/dist/css/theme.default.min.css' %}">
+
+<script type="text/javascript" src="{% static 'plugins/tablesorter/dist/js/jquery.tablesorter.js' %}"></script>
+
+<!-- tablesorter widgets (optional) -->
+<script type="text/javascript" src="{% static 'plugins/tablesorter/dist/js/jquery.tablesorter.widgets.js' %}"></script>
+<script>
+    $(function() {
+      $("#periodTB").tablesorter();
+    });
+</script>
+<!-- create_normal.html :: part 4 -->
+
+<script>
+    $('#add_more').click(function() {
+        cloneMore('tr.duplicate:last', 'form');
+    });
+
+    function cloneMore(selector, type) {
+        var newElement = $(selector).clone(true);
+        var total = $('#id_' + type + '-TOTAL_FORMS').val();
+        newElement.find(':input').each(function() {
+            var name = $(this).attr('name').replace('-' + (total-1) + '-','-' + total + '-');
+            var id = 'id_' + name;
+            $(this).attr({'name': name, 'id': id}).val('').removeAttr('checked');
+        });
+        newElement.find('label').each(function() {
+            var newFor = $(this).attr('for').replace('-' + (total-1) + '-','-' + total + '-');
+            $(this).attr('for', newFor);
+        });
+        total++;
+        $('#id_' + type + '-TOTAL_FORMS').val(total);
+        $(selector).after(newElement);
+    }
+</script>
+<script>
+    $("js-add-period").on("submit", 'periodform', function(){
+        var form = $(this);
+        $.ajax({
+            url: form.attr("action"),
+            data: form.serialize(),
+            type: form.attr("method"),
+            dataType: 'json',
+            success: function(data){
+                 setTimeout(function() {
+                        alert(data.message);
+                       window.location.reload();
+
+                  },4);
+            },
+            error: function(data){
+                setTimeout(function() {
+                        alert(data.message);
+                       window.location.reload();
+
+                  },4);
+            }
+        });
+
+        return false;
+
+    });
+</script>
+{% endblock %}

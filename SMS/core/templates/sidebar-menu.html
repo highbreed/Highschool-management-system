@@ -8,6 +8,42 @@
                 <p>Dashboard</p>
             </a>
         </li>
+        <li class="nav-item has-treeview">
+            <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-school"></i>
+                <p>
+                    School Setup
+                    <i class="fas fa-angle-left right"></i>
+                    <!--span class="badge badge-info right">6</span -->
+                </p>
+            </a>
+            <ul class="nav nav-treeview">
+                <li class="nav-item">
+                    <a href="{% url 'schedule:marking_period_dsh' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Marking Periods</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'schedule:school_calender' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Calender</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'schedule:school_periods' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Periods</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'schedule:school_info' %}">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>School Information</p>
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li class="nav-item">
             <a href="{% url 'admissions:teachers_view' %}" class="nav-link">
                 <i class="nav-icon fas fa-chalkboard-teacher"></i>
@@ -106,7 +142,13 @@
             </a>
             <ul class="nav nav-treeview">
                 <li class="nav-item">
-                    <a href="pages/UI/general.html" class="nav-link">
+                    <a href="{% url 'schedule:manage_timetable' %}" class="nav-link">
+                        <i class="far fa-circle nav-icon"></i>
+                        <p>Timetable Manager</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'schedule:create_timetable' %}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>School Timetable</p>
                     </a>
@@ -240,7 +282,7 @@
             </a>
             <ul class="nav nav-treeview">
                 <li class="nav-item">
-                    <a href="pages/UI/general.html" class="nav-link">
+                    <a href="{% url 'noticeboard:notification_manager' %}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Noticeboard</p>
                     </a>

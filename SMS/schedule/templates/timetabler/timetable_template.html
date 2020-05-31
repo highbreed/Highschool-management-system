@@ -1,0 +1,22 @@
+<table id="tabler_datatable" class="table table-bordered table-hover table-responsive ">
+    <colgroup span="2"></colgroup>
+    <colgroup span="2"></colgroup>
+    <tr>
+        <td rowspan="2"></td>
+    </tr>
+    <tr>
+        {% for period in school_periods %}
+            <th scope="col">{{period.get_table_name | capfirst}} </th>
+        {% endfor %}
+    </tr>
+{% for day in school_days %}
+    <tr>
+        <th scope="row">{{ day| capfirst }}</th>
+        {% for period in school_periods %}
+            <td><a class="btn btn-primary btn-sm">
+                
+            </a> </td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</table>

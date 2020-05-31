@@ -1,8 +1,0 @@
-pillow
-django-crispy-forms
-foundation
-six
-django-localflavor
-django-phonenumber-field
- django-countries
- twilio==6.35.4

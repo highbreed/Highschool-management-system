@@ -4,17 +4,17 @@
 <div class="card card-primary">
     <div class="card-header">
         <h3 class="card-title title">
-            <font color="white">
+            <span style="color: white; ">
                 <i class="fas fa-question-circle"></i>
                     Subjects Offered
-            </font>
+            </span>
         </h3>
         <div class="float-right">
             <a href="#modal-add-subject" class="btn btn-primary js-add-subject"  data-toggle="modal">
-                <font color="white">
+                <span color="white">
                     <i class="fas fa-user-plus"></i>
                     Add Subject
-                </font>
+                </span>
             </a>
         </div>
     </div>
@@ -26,6 +26,7 @@
                 <th>Subject Name</th>
                 <th>Subject Code</th>
                 <th>Selectable</th>
+                <th>Department</th>
                 <th>Available Action</th>
             </tr>
             </thead>
@@ -36,6 +37,7 @@
                     <td>{{ subject }}</td>
                     <td>{{ subject.subject_code }}</td>
                     <td>{{ subject.is_selectable }}</td>
+                    <td>{{subject.department}}</td>
                     <td>
                         <a href="#modal-add-subject" data-toggle="modal" data-link="{{ subject.pk }}" class="btn btn-warning btn-sm js-update-subject">
                             <i class="fas fa-edit"></i>
@@ -66,7 +68,7 @@
 <script>
     $('.js-add-subject').click(function(){
         $.ajax({
-            url: '{% url 'academic:add_subject' %}',
+            url: "{% url 'academic:add_subject' %}",
             dataType: 'json',
             success: function(data){
                  $("#modal-add-subject .modal-content").html(data.html_form);
@@ -79,7 +81,7 @@
         var user_id;
         user_id = $(this).attr("data-link");
         $.ajax({
-            url: '{% url 'academic:edit_subject' slug=1 %}',
+            url: "{% url 'academic:edit_subject' slug=1 %}",
             dataType: 'json',
             data: {
                  post_id: user_id

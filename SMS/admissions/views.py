@@ -3,10 +3,16 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.template.loader import render_to_string
+
+
 from .forms import ParentForm, StudentForm, \
 	AddressForm, TeacherForm, StudentClassSelectorForm
 # noinspection PyUnresolvedReferences
-from DB.models import  ClassRoom, Student, SubjectAllocation, StudentClass, Stream, Teacher, Parent
+from DB.models import  ClassRoom, Student, SubjectAllocation, \
+	StudentClass, Stream, Teacher, Parent,StudentsPreviousAcademicHistory, \
+	StudentsMedicalHistory, Address
+# noinspection PyUnresolvedReferences
+from DB.importer import generate_username, mail_agent
 
 
 def dashboard(request):
@@ -35,7 +41,6 @@ def dashboard(request):
 	}
 	return render(request, template, context)
 
-
 def class_room_view(request, slug):
 	"""
 	this function takes in the pk of classroom as an argument and
@@ -57,60 +62,6 @@ def class_room_view(request, slug):
 	template = 'class_room_details.html'
 	return render(request, template, context)
 
-
-def student_admission(request):
-	"""
-	a function to handle student admission process
-	it takes in parent and address data then links it to the database
-	:param request:
-	:return:
-	"""
-	if request.method == 'POST':
-		student_form = StudentForm(request.POST, request.FILES,prefix='student_form')
-		parent_form = ParentForm(request.POST,  prefix='parent_form')
-		class_selector_form = StudentClassSelectorForm(request.POST, prefix='class_selector_form')
-		# lets check to see if all forms are valid
-		if all([student_form.is_valid(), parent_form.is_valid(),
-				class_selector_form.is_valid()]):
-
-			parent = parent_form.save()
-			student = student_form.save(commit=False)
-			student_class = class_selector_form.save(commit=False)
-
-			# lets link the student and parent
-			student.parent = parent
-			student.save()
-
-			# lets assign a class to the student
-			student_class.student_id = student
-			student_class.save()
-
-			messages.info(request, "{} has been admitted successfully".format(student))
-			if 'save' in request.POST:
-				return redirect('/admissions/')
-			elif 'save and add another' in request.POST:
-				return redirect('/admissions/students_admission/')
-			else:
-				return HttpResponse('Edit form')
-		else:
-			return HttpResponse(student_form.errors)
-
-	else:
-		student_form = StudentForm(prefix='student_form')
-		parent_form = ParentForm(prefix='parent_form')
-		class_selector_form = StudentClassSelectorForm(prefix='class_selector_form')
-
-		template = 'student_admission.html'
-
-		context = {
-			'student_form': student_form,
-			'parent_form': parent_form,
-			'class_selector_form': class_selector_form,
-		}
-
-		return render(request, template, context)
-
-
 def teacher_admission(request):
 	"""
 	this function helps in the admission of new teachers
@@ -121,13 +72,23 @@ def teacher_admission(request):
 		teacher_form = TeacherForm(request.POST,request.FILES, prefix='teacher_form')
 
 		if teacher_form.is_valid():
-			teacher = teacher_form.save()
+			teacher = teacher_form.save(commit=False)
+
+			# generate the username and teacher id
+			teacher.username = generate_username(teacher_form.cleaned_data['first_name'], teacher_form.cleaned_data['last_name'])
+			print(teacher.username)
+
+			teacher.teacher_id = teacher.username
+
+			teacher.save()
+
+
 			messages.info(request, "{} added successfully".format(teacher))
 			return redirect('/admissions/teachers/')
 
 		else:
 			print('NOT Valid')
-			return HttpResponse('Not valid')
+			return HttpResponse('Not valid', teacher_form.errors)
 
 	else:
 		teacher_form = TeacherForm(prefix='teacher_form')
@@ -142,7 +103,6 @@ def teacher_admission(request):
 			return JsonResponse({'html_form':html_form})
 		else:
 			return render(request, template, context)
-
 
 def teacher_information_update(request, slug):
 	"""
@@ -175,7 +135,6 @@ def teacher_information_update(request, slug):
 		else:
 			return render(request, ajax_template, context)
 
-
 def teacher_details(request):
 	teacher_qs = get_object_or_404(Teacher, pk=request.GET['post_id'])
 	context = {
@@ -188,10 +147,8 @@ def teacher_details(request):
 	else:
 		return render(request,template, context)
 
-
 def teacher_delete(request):
 	return JsonResponse({'html_form':request})
-
 
 def teachers_view(request):
 	"""
@@ -213,7 +170,6 @@ def teachers_view(request):
 	else:
 		return render(request, template, context)
 
-
 def parent_list(request):
 	"""
 
@@ -227,7 +183,6 @@ def parent_list(request):
 	}
 	return render(request, template, context)
 
-
 def parents_details(request):
 	parent_qs = get_object_or_404(Parent, pk=request.GET['post_id'])
 	template = 'parents_temp/parents_details.html'
@@ -236,7 +191,6 @@ def parents_details(request):
 	}
 	html_form = render_to_string(template, context, request=request)
 	return JsonResponse({'html_form': html_form})
-
 
 def parent_update(request, slug):
 	if request.method == "POST":
@@ -258,6 +212,96 @@ def parent_update(request, slug):
 		template = 'parents_temp/parents_update.html'
 		return JsonResponse({'html_form':render_to_string(template, context, request=request)})
 
+def student_admission(request):
+	"""
+	a function to handle student admission process
+	it takes in parent and address data then links it to the database
+	:param request:
+	:return:
+	"""
+	if request.method == 'POST':
+		student_form = StudentForm(request.POST, request.FILES,prefix='student_form')
+		parent_form = ParentForm(request.POST,  prefix='parent_form')
+		# lets check to see if all forms are valid
+		if all([student_form.is_valid(), parent_form.is_valid()]):
+
+			parent = parent_form.save(commit=False)
+			student = student_form.save(commit=False)
+
+			assinged_class = student_form.cleaned_data['class_room']
+
+			parent_address = parent_form.cleaned_data['address']
+
+			# set up the parents address
+			parent_add = Address(
+				address_1=parent_address,
+			)
+			parent_add.save()
+			parent.address = parent_add
+			parent.save()
+
+			# lets link the student and parent
+			student.parent_guardian = parent
+			student.save()
+
+			# add student to assigned class
+
+			student_class = StudentClass(
+				classroom = assinged_class,
+				academic_year = 1,
+				student_id = student
+			)
+			student_class.save()
+
+			medical_history = student_form.cleaned_data['medical_history']
+			medical_file = student_form.cleaned_data['medical_file']
+
+			# set up the medical history
+			student_medical_history = StudentsMedicalHistory(
+				student=student,
+				history = medical_history,
+				file = medical_file,
+			)
+			student_medical_history.save()
+
+			former_school_name = student_form.cleaned_data['former_school']
+			recent_gpa = student_form.cleaned_data['former_gpa']
+			notes = student_form.cleaned_data['notes']
+			academic_file = student_form.cleaned_data['academic_records']
+
+			# record previous perfomance and academic history
+
+			academic_history = StudentsPreviousAcademicHistory(
+				students_name = student,
+				former_school = former_school_name,
+				last_gpa = recent_gpa,
+				notes = notes,
+				academic_recors = academic_file,
+			)
+			academic_history.save()
+
+			messages.info(request, "{} has been admitted successfully".format(student))
+			if 'save' in request.POST:
+				return redirect('/admissions/')
+			elif 'save and add another' in request.POST:
+				return redirect('/admissions/students_admission/')
+			else:
+				return HttpResponse('Edit form')
+		else:
+			return HttpResponse('Not valid', student_form.errors)
+
+	else:
+		student_form = StudentForm(prefix='student_form')
+		parent_form = ParentForm(prefix='parent_form')
+
+		template = 'students_temp/student_admission.html'
+
+		context = {
+			'student_form': student_form,
+			'parent_form': parent_form,
+		}
+
+		return render(request, template, context)
 
 def student_view(request):
 	"""
@@ -273,7 +317,6 @@ def student_view(request):
 	template = 'students_temp/students_view.html'
 	return render(request, template, context)
 
-
 def student_details(request):
 	"""
 	this is a function to view student details,
@@ -288,7 +331,6 @@ def student_details(request):
 		'student': student_qs,
 	}
 	return JsonResponse({'html_form': render_to_string(template, context, request=request)})
-
 
 def student_update(request, slug):
 	if request.method == "POST":

@@ -37,16 +37,39 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'core',
     'crispy_forms',
     'Academics',
     'admissions',
     'DB',
+    'schedule',
+    'grades',
+    'administration',
     'attendance',
+    'noticeboard',
+    'phonenumber_field',
+    'broadcast',
+    'school_setup',
 
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+# twillo messaging setups
+TWILIO_ACCOUNT_SID = "ACcaf1021a6f5ac52e078fb580410fddd0"
+TWILIO_AUTH_TOKEN = "ac75901dc082f3131c2663a50e9ffcb8"
+TWILIO_NUMBER = "+12517322211"
+
+# Email agent settings
+
+
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'stephenkacloudy4707@gmail.com'
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -130,7 +153,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = "DB.User"
+#AUTH_USER_MODEL = "DB.User"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/

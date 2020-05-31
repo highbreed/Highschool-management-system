@@ -25,4 +25,8 @@ urlpatterns = [
     path('academic/', include('Academics.urls')),
     path('admissions/', include('admissions.urls')),
     path('attendance/', include('attendance.urls')),
+    path('noticeboard/', include('noticeboard.urls')),
+    path('sms/notice/', include('broadcast.urls')),
+    path('schedule/', include('schedule.urls')),
+    path('setup/', include('school_setup.urls')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

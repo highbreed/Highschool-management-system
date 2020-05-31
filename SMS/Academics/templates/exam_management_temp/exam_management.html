@@ -32,9 +32,17 @@
                     {% for exam in exam_list %}
                     <tr>
                         <td>{{ exam }}</td>
-                        <td>{{ exam.start_on_date  }}</td>
-                        <td>{{ exam.ends_on_date }}</td>
-                        <td>{{ exam.status }}</td>
+                        <td>{{ exam.start_date  }}</td>
+                        <td>{{ exam.ends_date }}</td>
+                        <td>{% if exam.status == 'Coming up' %}
+                            <span class="badge badge-warning">{{ exam.status }}</span>
+                        {% elif exam.status == "Done" %}
+                            <span class="badge badge-success">{{ exam.status }} </span>
+                        {% else %}
+                            <span class="badge badge-primary">{{ exam.status }} </span>
+                            {% endif %}
+                        </td>
+
                         <td>{{ exam.comments }}</td>
                         <td>
                             <div class="option-btn">
@@ -68,7 +76,7 @@
 
 {% block extra_scripts %}
 <script>
-    $('.js-add-exam').click('function(){
+    $('.js-add-exam').click(function(){
         $.ajax({
             url: '{% url 'academic:add_exam' %}',
             dataType: 'json',
@@ -79,7 +87,7 @@
     });
 </script>
 <script>
-    $("#modal-add-exam").on("submit", 'js-exam-registration', function(){
+    $("#modal-add-exam").on("submit", '.js-exam-registration', function(){
         var form = $(this);
         $.ajax({
             url: form.attr("action"),

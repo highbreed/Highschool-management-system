@@ -2,13 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.template.loader import render_to_string
 from django.http import JsonResponse, HttpResponse
-
-
 from .forms import ClassRoomRegForm, StreamRegForm, SubjectRegForm\
 	, SubjectAllocationForm, ExaminationRegForm
 # noinspection PyUnresolvedReferences
 from DB.models import ClassRoom, Stream, Student, StudentClass\
-	, Subject,  SubjectAllocation, AcademicYear, Term, \
+	, Subject,  SubjectAllocation, AcademicYear, \
 	ExaminationListHandler, Teacher
 
 
@@ -61,14 +59,14 @@ def edit_class_room(request, slug):
 def classroom_view(request, slug):
 	# db query
 	classroom_qs = get_object_or_404(ClassRoom, pk=slug) # lets get the classroom object
-	students_qs = StudentClass.objects.filter(main_class=classroom_qs)  # query the student who's class allocated == to our classroom object
+	students_qs = StudentClass.objects.filter(classroom=classroom_qs)  # query the student who's class allocated == to our classroom object
 
 	# student list
 	class_students_list = []
 
 	# get the students who's academic year is current active and append to our list
 	for student_data in students_qs:
-		if student_data.academic_year.is_current_session:
+		if student_data.academic_year.active_year:
 			class_students_list.append(student_data)
 
 	context = {
@@ -184,7 +182,7 @@ def get_subjects(request):
 	allocated_subjects = []
 	subject_qs = SubjectAllocation.objects.filter(class_room=request.GET['post_id'])
 	for objects in subject_qs:
-		if objects.academic_year.is_current_session:
+		if objects.academic_year.active_year:
 			allocated_subjects.append(objects)
 	template = 'subject_management_temp/subject_table.html'
 	context = {
@@ -193,6 +191,7 @@ def get_subjects(request):
 	return JsonResponse({'html_form':render_to_string(template, context, request=request)})
 
 def add_class_subject(request, slug):
+
 	"""
 	Lets allocate subjects to classes
 	:param request:
@@ -279,11 +278,11 @@ def edit_examination(request, slug):
 		if exam_form.is_valid():
 			exam_form.save()
 			messages.info(request, "{} edited successfully".format(exam_form.cleaned_data['name']))
-			return redirect('/academic/exam_management/')
+			return redirect('/academic/exam/management/')
 		else:
 			messages.info(request, "{} not edited check your information and enter "
 								   "again".format(exam_form.cleaned_data['name']))
-			return redirect('/academic/exam_management/')
+			return redirect('/academic/exam/management/')
 	else:
 		exam_inst = get_object_or_404(ExaminationListHandler, pk=request.GET['post_id'])
 		exam_form = ExaminationRegForm(instance=exam_inst)

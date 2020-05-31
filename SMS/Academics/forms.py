@@ -3,8 +3,10 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 # noinspection PyUnresolvedReferences
 from DB.models import School, Subject, ClassRoom, Stream\
-	,  SubjectAllocation, ExaminationListHandler
+	,  SubjectAllocation, ExaminationListHandler, GradeLevel
 from django.forms import CheckboxSelectMultiple
+
+
 
 
 class SchoolRegForm(forms.ModelForm):
@@ -32,6 +34,7 @@ class SubjectRegForm(forms.ModelForm):
 
 
 class ClassRoomRegForm(forms.ModelForm):
+	grade_level = forms.ModelChoiceField(queryset=GradeLevel.objects.all())
 	class Meta:
 		model = ClassRoom
 		fields = '__all__'
@@ -81,12 +84,12 @@ class SubjectAllocationForm(forms.ModelForm):
 class ExaminationRegForm(forms.ModelForm):
 	class Meta:
 		model = ExaminationListHandler
-		fields = '__all__'
-		exclude = [
-			'created_by',
+		fields = [
+			'name', 'start_date', 'ends_date',
+			'out_of', 'classrooms', 'comments',
 		]
 		widgets = {
 			'classrooms': CheckboxSelectMultiple(),
-			'start_on_date': forms.DateInput(attrs={'id': 'datetimepicker12', 'placeholder':'2020-01-30'}),
-			'ends_on_date': forms.DateInput(attrs={'id': 'datetimepicker', 'placeholder':'2020-01-30'}),
+			'start_date': forms.DateInput(attrs={'id': 'start-date-picker', 'placeholder':'2020-01-30'}),
+			'ends_date': forms.DateInput(attrs={'id': 'end-date-picker', 'placeholder':'2020-01-30'}),
 		}

@@ -23,7 +23,7 @@ def student_attendance_manager(request):
 		attendance_date = request.POST['date_field'] # date
 
 		# get the students in the class which is current active
-		students = StudentClass.objects.filter(main_class=class_name)
+		students = StudentClass.objects.filter(classroom=class_name)
 
 		# modelform creation
 		# noinspection PyPep8Naming

@@ -39,18 +39,20 @@
                         </td>
                         <th>Class</th>
                         <td>
-                            {% for data in student.student_class.all %} {{ data.main_class | capfirst}} {% endfor %}
+                            {% for data in student.student_class.all %} {{ data.classroom | capfirst}} {% endfor %}
                         </td>
                     </tr>
                     <tr>
                         <th>Address</th>
-                        <td>{{ student.parent.address }}</td>
+                        <td>{{ student.parent_guardian.address }}</td>
+                        <th>Class of:</th>
+                        <td>{{ student.class_of_year.address }}</td>
                     </tr>
                     <tr>
                         <th>Parent</th>
-                        <td>{{ student.parent | capfirst }}</td>
+                        <td>{{ student.parent_guardian  | capfirst }}</td>
                         <th>Parent phone</th>
-                        <td>{{ student.parent.phone_number }}</td>
+                        <td>{{ student.parent_guardian.phone_number }}</td>
                     </tr>
                     <tr>
                         <th>Religion</th>
